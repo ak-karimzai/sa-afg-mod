@@ -1,0 +1,213 @@
+// Mission 8 - Qala-e-Kohna: assault the mountain fortress with an army squad, kill Siahdast.
+MISSION_START
+{
+LVAR_INT major boss bblip stage enemy[11] eblip[11] ally[4] k alive taunted
+LVAR_FLOAT px py pz d
+GOSUB m8_main
+IF HAS_DEATHARREST_BEEN_EXECUTED
+    PRINT_BIG M_FAIL 5000 1
+ENDIF
+GOSUB m8_cleanup
+MISSION_END
+
+m8_main:
+SCRIPT_NAME AFM8
+major = -1
+boss = -1
+bblip = -1
+k = 0
+WHILE k < 11
+    enemy[k] = -1
+    eblip[k] = -1
+    k += 1
+ENDWHILE
+k = 0
+WHILE k < 4
+    ally[k] = -1
+    k += 1
+ENDWHILE
+flag_player_on_mission = 1
+REGISTER_MISSION_GIVEN
+WAIT 0
+PRINT_BIG AF8_T 3000 2
+REQUEST_MODEL 287
+REQUEST_MODEL 247
+REQUEST_MODEL 248
+REQUEST_MODEL 162
+REQUEST_MODEL 200
+REQUEST_MODEL 355
+REQUEST_MODEL 356
+REQUEST_MODEL 359
+LOAD_ALL_MODELS_NOW
+CREATE_CHAR PEDTYPE_MISSION2 287 @base_major@ major
+SET_CHAR_HEADING major @base_major.h@
+SET_CHAR_PROOFS major TRUE TRUE TRUE TRUE TRUE
+SET_PLAYER_CONTROL player OFF
+SWITCH_WIDESCREEN ON
+PRINT_NOW AF8_01 5000 1
+WAIT 5000
+DO_FADE 1000 FADE_OUT
+WAIT 1100
+SET_TIME_OF_DAY 4 30
+// the army convoy drops the squad below the fortress gate
+LOAD_SCENE @fort_start@
+SET_CHAR_COORDINATES scplayer @fort_start@
+SET_CHAR_HEADING scplayer 0.0
+GIVE_WEAPON_TO_CHAR scplayer WEAPONTYPE_M4 400
+SET_CURRENT_CHAR_WEAPON scplayer WEAPONTYPE_M4
+ADD_ARMOUR_TO_CHAR scplayer 100
+CREATE_CHAR PEDTYPE_MISSION2 287 @fort_ally0@ ally[0]
+CREATE_CHAR PEDTYPE_MISSION2 287 @fort_ally1@ ally[1]
+CREATE_CHAR PEDTYPE_MISSION2 287 @fort_ally2@ ally[2]
+CREATE_CHAR PEDTYPE_MISSION2 287 @fort_ally3@ ally[3]
+k = 0
+WHILE k < 4
+    GIVE_WEAPON_TO_CHAR ally[k] WEAPONTYPE_M4 1000
+    SET_CHAR_HEALTH ally[k] 250
+    SET_GROUP_MEMBER player_group ally[k]
+    SET_CHAR_NEVER_LEAVES_GROUP ally[k] TRUE
+    k += 1
+ENDWHILE
+CREATE_CHAR PEDTYPE_MISSION1 247 @fort0@ enemy[0]
+CREATE_CHAR PEDTYPE_MISSION1 248 @fort1@ enemy[1]
+CREATE_CHAR PEDTYPE_MISSION1 162 @fort2@ enemy[2]
+CREATE_CHAR PEDTYPE_MISSION1 200 @fort3@ enemy[3]
+CREATE_CHAR PEDTYPE_MISSION1 247 @fort4@ enemy[4]
+CREATE_CHAR PEDTYPE_MISSION1 248 @fort5@ enemy[5]
+CREATE_CHAR PEDTYPE_MISSION1 162 @fort6@ enemy[6]
+CREATE_CHAR PEDTYPE_MISSION1 200 @fort7@ enemy[7]
+CREATE_CHAR PEDTYPE_MISSION1 247 @fort8@ enemy[8]
+CREATE_CHAR PEDTYPE_MISSION1 248 @fort9@ enemy[9]
+CREATE_CHAR PEDTYPE_MISSION1 162 @fort10@ enemy[10]
+k = 0
+WHILE k < 11
+    GIVE_WEAPON_TO_CHAR enemy[k] WEAPONTYPE_AK47 500
+    SET_CHAR_ACCURACY enemy[k] 40
+    SET_CHAR_STAY_IN_SAME_PLACE enemy[k] TRUE
+    ADD_BLIP_FOR_CHAR enemy[k] eblip[k]
+    k += 1
+ENDWHILE
+GIVE_WEAPON_TO_CHAR enemy[4] WEAPONTYPE_ROCKETLAUNCHER 6
+CREATE_CHAR PEDTYPE_MISSION1 248 @fort_boss@ boss
+SET_CHAR_HEADING boss @fort_boss.h@
+SET_CHAR_MAX_HEALTH boss 600
+SET_CHAR_HEALTH boss 600
+ADD_ARMOUR_TO_CHAR boss 100
+GIVE_WEAPON_TO_CHAR boss WEAPONTYPE_AK47 1000
+SET_CHAR_ACCURACY boss 55
+SET_CHAR_STAY_IN_SAME_PLACE boss TRUE
+ADD_BLIP_FOR_CHAR boss bblip
+CHANGE_BLIP_SCALE bblip 3
+SWITCH_WIDESCREEN OFF
+SET_CAMERA_BEHIND_PLAYER
+DO_FADE 1500 FADE_IN
+SET_PLAYER_CONTROL player ON
+PRINT_NOW AF8_02 6000 1
+mission_counter = 12
+DISPLAY_ONSCREEN_COUNTER_WITH_STRING mission_counter COUNTER_DISPLAY_NUMBER AF8_04
+stage = 0
+taunted = 0
+
+m8_loop:
+WAIT 250
+GET_CHAR_COORDINATES scplayer px py pz
+GET_DISTANCE_BETWEEN_COORDS_2D px py @fort_boss.x@ @fort_boss.y@ d
+IF stage = 0
+    IF d < 75.0
+        stage = 1
+        k = 0
+        WHILE k < 11
+            IF NOT IS_CHAR_DEAD enemy[k]
+                SET_CHAR_STAY_IN_SAME_PLACE enemy[k] FALSE
+                TASK_KILL_CHAR_ON_FOOT enemy[k] scplayer
+            ENDIF
+            k += 1
+        ENDWHILE
+    ENDIF
+ENDIF
+IF taunted = 0
+AND d < 30.0
+    taunted = 1
+    PRINT_NOW AF8_03 5000 1
+    IF NOT IS_CHAR_DEAD boss
+        SET_CHAR_STAY_IN_SAME_PLACE boss FALSE
+        TASK_KILL_CHAR_ON_FOOT boss scplayer
+    ENDIF
+ENDIF
+alive = 0
+k = 0
+WHILE k < 11
+    IF IS_CHAR_DEAD enemy[k]
+        IF NOT eblip[k] = -1
+            REMOVE_BLIP eblip[k]
+            eblip[k] = -1
+        ENDIF
+    ELSE
+        alive += 1
+    ENDIF
+    k += 1
+ENDWHILE
+IF IS_CHAR_DEAD boss
+    IF NOT bblip = -1
+        REMOVE_BLIP bblip
+        bblip = -1
+    ENDIF
+ELSE
+    alive += 1
+ENDIF
+mission_counter = alive
+IF alive = 0
+    CLEAR_ONSCREEN_COUNTER mission_counter
+    WAIT 1500
+    PRINT_NOW AF8_05 7000 1
+    WAIT 4000
+    mission_progress = 8
+    ADD_SCORE player 10000
+    PRINT_WITH_NUMBER_BIG M_PASS 10000 5000 1
+    REGISTER_MISSION_PASSED AF8_T
+    PLAYER_MADE_PROGRESS 1
+    PLAY_MISSION_PASSED_TUNE 1
+    RETURN
+ENDIF
+GOTO m8_loop
+
+m8_cleanup:
+CLEAR_ONSCREEN_COUNTER mission_counter
+k = 0
+WHILE k < 11
+    IF NOT eblip[k] = -1
+        REMOVE_BLIP eblip[k]
+    ENDIF
+    IF NOT enemy[k] = -1
+        MARK_CHAR_AS_NO_LONGER_NEEDED enemy[k]
+    ENDIF
+    k += 1
+ENDWHILE
+k = 0
+WHILE k < 4
+    IF NOT ally[k] = -1
+        IF NOT IS_CHAR_DEAD ally[k]
+            REMOVE_CHAR_FROM_GROUP ally[k]
+        ENDIF
+        MARK_CHAR_AS_NO_LONGER_NEEDED ally[k]
+    ENDIF
+    k += 1
+ENDWHILE
+IF NOT bblip = -1
+    REMOVE_BLIP bblip
+ENDIF
+IF NOT boss = -1
+    MARK_CHAR_AS_NO_LONGER_NEEDED boss
+ENDIF
+IF NOT major = -1
+    MARK_CHAR_AS_NO_LONGER_NEEDED major
+ENDIF
+MARK_MODEL_AS_NO_LONGER_NEEDED 287
+MARK_MODEL_AS_NO_LONGER_NEEDED 247
+MARK_MODEL_AS_NO_LONGER_NEEDED 248
+MARK_MODEL_AS_NO_LONGER_NEEDED 162
+MARK_MODEL_AS_NO_LONGER_NEEDED 200
+flag_player_on_mission = 0
+MISSION_HAS_FINISHED
+RETURN
+}
