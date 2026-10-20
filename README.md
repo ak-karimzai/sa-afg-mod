@@ -2,14 +2,15 @@
 
 A total-conversion mod for **classic GTA San Andreas (PC)**. It replaces the San Andreas map with a
 36 × 36 km slice of real Afghan terrain (the Shomali plain and the Ghorband valley north of Kabul,
-scaled 1:6). It adds a new 8-mission story, original Afghan-style music, new zone names, a
+scaled 1:6). It adds a new 12-mission story, original Afghan-style music, new zone names, a
 dry-highland weather cycle, character outfits and a new radar map.
 
 ![In game: Qala-e-Naw](docs/screenshot_qala_e_naw.png)
 
-> **Status: version 1.1.0.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
-> Qala-e-Naw with the mission hints, radar markers and text working. Version 1.1 rebuilt the eight missions with
-> cutscenes, staged objectives, mid-mission events and fail states (see [CHANGELOG.md](CHANGELOG.md)). The scripts
+> **Status: version 1.2.0.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
+> Qala-e-Naw with the mission hints, radar markers and text working. Version 1.1 rebuilt the missions with cutscenes,
+> staged objectives and fail states; 1.2 adds four action missions (hostage rescue, demolition, convoy ambush,
+> helicopter hunt), a getaway chase in the finale and the police uniform (see [CHANGELOG.md](CHANGELOG.md)). The scripts
 > compile and were checked against the map geometry, but the missions have not been played through yet, so please
 > report what happens.
 
@@ -22,9 +23,9 @@ dry-highland weather cycle, character outfits and a new radar map.
 | **Map** | Real elevation data (SRTM), 576 terrain tiles + 144 LOD tiles, dirt roads routed through the mountains with switchbacks, irrigated fields, poplar-lined roads, orchards |
 | **Places** | Qala-e-Naw (town, bazaar, mosque, police station, your safehouse), Camp Sangar (army base with runway, hangars, helipads), villages Deh-e-Bagh, Dara-e-Sabz, Sar-e-Kotal, Shahrak, Darwaza Checkpoint, Sang-e-Siah bandit camp, Qala-e-Kohna mountain fortress, Burj-e-Khak ruins |
 | **Buildings** | 28 new models: mud-brick *qala* compounds with towers, houses, mosques with turquoise domes and minarets, bazaar stalls, watchtowers, HESCO walls, guard towers, tents, hangars, fortress, ruins, trees |
-| **Story** | 8 missions with cutscenes, dialogue, checkpoints, timers, damage bars and fail states: *Homecoming, Market Day, Medicine for Shahrak, Darwaza, Aid Convoy, Black Stone, Eagle's Nest, Qala-e-Kohna* – see [docs/STORY.md](docs/STORY.md) |
-| **People** | Kaka Rahim, Captain Nasir and Major Hamid stand at their places all game long; villagers (men, women, elders) who chat and wander, police at the checkpoint, soldiers at the base, Black Stone bandits – all reuse SA's rural/desert peds |
-| **Character styles** | Wardrobe in your courtyard: villager, farmer, shepherd, city clothes (CJ), police volunteer (after mission 4), army fatigues (after mission 5) |
+| **Story** | 12 missions with cutscenes, dialogue, checkpoints, timers, damage bars and fail states: deliveries, a bazaar shoot-out, a checkpoint defence, a hostage rescue, an escorted convoy, a demolition raid, a camp raid, a convoy ambush, helicopter scouting, the fortress assault with a getaway chase, and a Hunter hunt – see [docs/STORY.md](docs/STORY.md) |
+| **People** | Kaka Rahim, Captain Nasir and Major Hamid stand at their places all game long; villagers (men, women, elders) who chat and wander, soldiers at the base, Black Stone bandits – all reuse SA's rural/desert peds. The police wear Afghan dress in the Taliban style (kameez, waistcoat, turban, beard), repainted from your game's own textures at build time |
+| **Character styles** | Wardrobe in your courtyard: villager, farmer, shepherd, city clothes (CJ), police volunteer (after mission 4), army fatigues (after mission 6) |
 | **Music** | 6 original instrumental tracks (rubab, dutar, nay flute, tabla, dhol, harmonium drone in Afghan modes and rhythms such as *mughulchi* 7/8 and *attan*), played by an in-car radio |
 | **Atmosphere** | New timecyc: deep-blue high-altitude sky, dusty horizon, golden dawn/dusk, longer view distance; weather cycle with clear days, haze, rare dust storms and rain |
 | **Vehicles** | Parked pickups, sedans, motorbikes and tractors in towns; police pickups at the checkpoint; army jeeps, trucks, Cargobob and Dodo at the base; Hunter + Rhino unlocked at the end |
@@ -45,7 +46,7 @@ Steam, Rockstar Launcher or disc copy to the first mission, including how to get
 
 ### Steps
 
-1. Download `AfghanistanMod-v1.1.0.zip` and unzip it anywhere.
+1. Download `AfghanistanMod-v1.2.0.zip` and unzip it anywhere.
 2. Back up your saves (`Documents\GTA San Andreas User Files`) if you care about them: saving in this mod can
    overwrite save slots.
 3. Run the installer and select your GTA San Andreas folder (the one with `gta_sa.exe`):
@@ -108,7 +109,7 @@ game folder to a local disk such as `C:\Games\GTA San Andreas` (not `C:\Program 
 
   Each mission starts with a short cutscene, then shows its objective at the bottom of the screen. Vehicles and
   destinations get a radar blip and a red checkpoint; timers, damage bars and enemy counters appear at the top right.
-  Mission 6 needs a vehicle of your own (take one of the parked pickups or Rahim's truck from mission 1).
+  Missions 5, 7 and 8 need a vehicle of your own (take one of the parked pickups or Rahim's truck from mission 1).
 - **Save:** the save-disk marker in your courtyard.
 - **Wardrobe:** the T-shirt marker in your courtyard. Each visit switches to the next outfit.
 - **Radio:** in any vehicle the Afghan radio plays automatically. Press **N** for the next track and **M** to turn it on/off.
@@ -141,9 +142,12 @@ Requirements: Python 3 with `numpy`, `scipy` and `Pillow`, `ffmpeg` (music), CMa
 
 ```bash
 tools/setup.sh                  # fetches DragonFF and builds gta3sc into tools/vendor/
-python3 tools/build.py --zip    # writes dist/ and release/AfghanistanMod-v<version>.zip
+python3 tools/build.py --zip --game "/path/to/GTA San Andreas"   # writes dist/ and release/AfghanistanMod-v<version>.zip
 python3 tools/dev/quick_scripts.py --install "/path/to/GTA San Andreas"   # text + scripts only (~8 s)
 ```
+
+`--game` (or the `GTA_SA_DIR` environment variable) points at a game folder; its `models/gta3.img` is read to derive
+the police uniform textures. Without it the build still works and the police keep their original look.
 
 The first build downloads elevation tiles into `cache/dem/` and synthesises the music into `cache/music/` (slow).
 `dist/` is the complete package: the mod files in `game/`, the installers, and the bundled requirements from
@@ -153,8 +157,8 @@ The first build downloads elevation tiles into `cache/dem/` and synthesises the 
 
 | Path | Content |
 |---|---|
-| `tools/build.py`, `tools/afg/` | The generator: world, layout, models, collision, textures, data files, music, `afghan_limits.asi` |
-| `tools/scripts/` | Main thread, ambient life, 8 missions and the radio (GTA3script) |
+| `tools/build.py`, `tools/afg/` | The generator: world, layout, models, collision, textures, police uniform, data files, music, `afghan_limits.asi` |
+| `tools/scripts/` | Main thread, ambient life, 12 missions and the radio (GTA3script) |
 | `tools/installer/` | `INSTALL.bat`, `install.ps1`, `install.py`, uninstallers |
 | `third_party/` | Bundled ModLoader, CLEO 5 and SilentPatch release archives with licences and checksums |
 | `docs/` | Story, step-by-step install guide, technical notes, map and previews |
@@ -170,6 +174,7 @@ The first build downloads elevation tiles into `cache/dem/` and synthesises the 
 - Tools used at build time (not shipped in the mod): **gta3sc** script compiler by thelink2012 (MIT), and
   **DragonFF** collision writer and file parsers by Parik27 and contributors (GPL-3.0).
 - File format references: gtamods.com wiki and the gta-reversed project.
-- All models, textures, scripts, text and music in this mod were generated by the build scripts in this repository.
+- All models, textures, scripts, text and music in this mod were generated by the build scripts in this repository. The
+  two police textures are repainted at build time from the textures in the player's own copy of the game.
 - GTA San Andreas is © Rockstar Games. This mod contains no Rockstar files, so you need your own copy of the game. It is a
   non-commercial fan project. All characters, groups and events are fictional.

@@ -15,6 +15,10 @@ VAR_FLOAT contact_x contact_y contact_z player_x player_y player_z
 // station), 2 Major Hamid (Camp Sangar HQ). Missions use these handles for their cutscenes.
 VAR_INT contact_ped[3] contact_model[3] npc_i
 VAR_FLOAT npc_x[3] npc_y[3] npc_z[3] npc_h[3] npc_d
+// convoy routes (filled in by the generator): fr = mountain road Deh-e-Bagh -> Qala-e-Kohna,
+// cv = Ghorband valley Sang-e-Siah -> Dara-e-Sabz -> Darwaza. Driven with TASK_CAR_DRIVE_TO_COORD in straight lines.
+VAR_FLOAT fr_x[56] fr_y[56] fr_z[56] fr_h[56] cv_x[64] cv_y[64] cv_z[64] cv_h[64]
+VAR_INT fr_count cv_count
 // ambient population (filled by //@GENERATED_INIT@)
 VAR_FLOAT amb_site_x[8] amb_site_y[8] amb_spot_x[96] amb_spot_y[96] amb_spot_z[96]
 VAR_INT amb_site_kind[8] amb_site_count amb_ped[10] amb_active amb_i amb_j amb_k amb_model amb_timer
@@ -131,7 +135,7 @@ IF IS_PLAYER_PLAYING player
     AND NOT style_model = 0
         GOSUB apply_style
     ENDIF
-    IF mission_progress = 8
+    IF mission_progress = 12
     AND hunter_given = 0
         REQUEST_MODEL HUNTER
         LOAD_ALL_MODELS_NOW
@@ -200,28 +204,32 @@ OR mission_progress = 2
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_RYDER contact_blip
 ENDIF
 IF mission_progress = 3
-OR mission_progress = 5
+OR mission_progress = 4
+OR mission_progress = 7
     contact_x = @police.x@
     contact_y = @police.y@
     contact_z = @police.z@
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_POLICE contact_blip
 ENDIF
-IF mission_progress = 4
+IF mission_progress = 5
 OR mission_progress = 6
-OR mission_progress = 7
+OR mission_progress = 8
+OR mission_progress = 9
+OR mission_progress = 10
+OR mission_progress = 11
     contact_x = @base_hq.x@
     contact_y = @base_hq.y@
     contact_z = @base_hq.z@
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_FLAG contact_blip
 ENDIF
-IF mission_progress = 8
-    mission_shown = 8
+IF mission_progress = 12
+    mission_shown = 12
     RETURN
 ENDIF
 RETURN
 
 check_contact:
-IF mission_progress > 7
+IF mission_progress > 11
     RETURN
 ENDIF
 IF NOT LOCATE_CHAR_ON_FOOT_3D scplayer contact_x contact_y contact_z 1.5 1.5 2.0 FALSE
@@ -242,16 +250,28 @@ IF mission_progress = 3
     LOAD_AND_LAUNCH_MISSION m4_darwaza.sc
 ENDIF
 IF mission_progress = 4
-    LOAD_AND_LAUNCH_MISSION m5_convoy.sc
+    LOAD_AND_LAUNCH_MISSION m5_burj.sc
 ENDIF
 IF mission_progress = 5
-    LOAD_AND_LAUNCH_MISSION m6_blackstone.sc
+    LOAD_AND_LAUNCH_MISSION m6_convoy.sc
 ENDIF
 IF mission_progress = 6
-    LOAD_AND_LAUNCH_MISSION m7_eagle.sc
+    LOAD_AND_LAUNCH_MISSION m7_fueldump.sc
 ENDIF
 IF mission_progress = 7
-    LOAD_AND_LAUNCH_MISSION m8_fortress.sc
+    LOAD_AND_LAUNCH_MISSION m8_blackstone.sc
+ENDIF
+IF mission_progress = 8
+    LOAD_AND_LAUNCH_MISSION m9_pass.sc
+ENDIF
+IF mission_progress = 9
+    LOAD_AND_LAUNCH_MISSION m10_eagle.sc
+ENDIF
+IF mission_progress = 10
+    LOAD_AND_LAUNCH_MISSION m11_fortress.sc
+ENDIF
+IF mission_progress = 11
+    LOAD_AND_LAUNCH_MISSION m12_vulture.sc
 ENDIF
 // wait until the mission thread has set the flag so we don't relaunch it
 WAIT 500
@@ -292,7 +312,7 @@ IF LOCATE_CHAR_ON_FOOT_3D scplayer @wardrobe@ 1.2 1.2 2.0 TRUE
                 style_ok = 0
             ENDIF
             IF style = 6
-            AND mission_progress < 5
+            AND mission_progress < 6
                 style_ok = 0
             ENDIF
         ENDWHILE
@@ -316,7 +336,7 @@ IF LOCATE_CHAR_ON_FOOT_3D scplayer @wardrobe@ 1.2 1.2 2.0 TRUE
         IF style = 6
             PRINT_NOW AFG_WR6 3000 1
         ENDIF
-        IF mission_progress < 5
+        IF mission_progress < 6
             PRINT_HELP AFG_WRD
         ENDIF
     ENDIF

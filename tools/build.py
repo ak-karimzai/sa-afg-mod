@@ -17,7 +17,7 @@ from afg import export, layout, world  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DIST = os.path.join(ROOT, "dist")
 ID_BASE = 11682  # first free model id in vanilla SA (see docs/TECHNICAL.md)
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 
 def main():
@@ -25,6 +25,8 @@ def main():
     ap.add_argument("--no-music", action="store_true")
     ap.add_argument("--no-scripts", action="store_true")
     ap.add_argument("--zip", action="store_true", help="also create release/AfghanistanMod-v<VERSION>.zip")
+    ap.add_argument("--game", default=os.environ.get("GTA_SA_DIR"),
+                    help="your GTA SA folder; its models/gta3.img is used to derive the police uniform textures")
     args = ap.parse_args()
     t0 = time.time()
     if os.path.exists(DIST):
@@ -44,6 +46,8 @@ def main():
     ex.txds()
     ex.collisions()
     ex.ide_ipl(data)
+    from afg import peds
+    peds.build(args.game, models)
     print("[4/6] radar")
     os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True)
     ex.radar(os.path.join(ROOT, "docs", "map.png"))

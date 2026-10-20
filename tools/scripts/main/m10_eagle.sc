@@ -11,7 +11,7 @@ GOSUB m7_cleanup
 MISSION_END
 
 m7_main:
-SCRIPT_NAME AFM7
+SCRIPT_NAME AFM10
 heli = -1
 blip = -1
 photos = 0
@@ -178,7 +178,7 @@ WAIT 5500
 PRINT_NOW AF7_12 5000 1
 WAIT 5000
 GOSUB m7_cut_end
-mission_progress = 7
+mission_progress = 10
 ADD_SCORE player 2500
 PRINT_WITH_NUMBER_BIG M_PASS 2500 5000 1
 REGISTER_MISSION_PASSED AF7_T

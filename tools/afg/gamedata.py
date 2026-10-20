@@ -287,12 +287,86 @@ class Points:
         # --- mission 6: the stolen aid in front of the cave
         c = s["Sang-e-Siah"]
         self.add("m6_loot", c["x"], c["y"] + 14, dz=0.8)
-        # --- mission 8: epilogue in the safehouse courtyard
+        # --- epilogue in the safehouse courtyard (after the last mission)
         sx, sy, _, _ = self.p["safehouse"]
         self.add("m8_rahim", sx, sy + 3.0, 180)
         self.add("m8_farid", sx, sy, 0)
         self.add("cam_end", sx - 4.5, sy - 3.5, dz=1.9)
         self.add("cam_end_t", sx, sy + 1.5, dz=1.2)
+
+        # ================= v1.2 action missions =================
+        def first_clear(cands):
+            for x, y in cands:
+                if self._clear(x, y):
+                    return x, y
+            return cands[0]
+
+        # --- Darwaza: two more attackers in the last wave
+        for i, (dist, side) in enumerate([(180, -10), (195, 10)]):
+            self.roadside(f"cp_att{4 + i}", valley, dist, side=side)
+        # --- Black Stone camp: reinforcement pickup comes up from the valley
+        camp_rd = self.road("Dara-e-Sabz", "Sang-e-Siah")
+        camp_len = float(np.hypot(*np.diff(camp_rd, axis=0).T).sum())
+        self.roadside("camp_car", camp_rd, camp_len - 170, side=0, dh=0, dz=1.5)
+        # --- Burj-e-Khak: hostage rescue at the ruins, marksmen on the perimeter, pickups waiting on the way back
+        r = s["Burj-e-Khak"]
+        rx, ry = r["x"], r["y"]
+        hx, hy = first_clear([(rx + 8, ry + 2), (rx - 8, ry + 2), (rx + 2, ry - 9)])
+        self.add("bk_hostage", hx, hy, 90)
+        for i, (x, y) in enumerate(self.open_spots(rx, ry, 45, 8, 11)):
+            self.add(f"bk{i}", x, y)
+        for i, (dx, dy) in enumerate([(-58, 34), (52, -44)]):
+            x, y = first_clear([(rx + dx, ry + dy), (rx + dx + 8, ry + dy), (rx + dx, ry + dy - 8)])
+            self.add(f"bk_sn{i}", x, y)
+        rd = self.road("Camp Sangar", "Qala-e-Naw")
+        self.roadside("bk_car0", rd, 0.35 * float(np.hypot(*np.diff(rd, axis=0).T).sum()), side=6.5, dz=1.5)
+        rd = self.road("Qala-e-Naw", "Shahrak")
+        self.roadside("bk_car1", rd, 0.45 * float(np.hypot(*np.diff(rd, axis=0).T).sum()), side=6.5, dz=1.5)
+        # --- Fuel and Fire: three fuel stacks in Sar-e-Kotal, guards, reinforcements from the valley road
+        k = s["Sar-e-Kotal"]
+        for i, (x, y) in enumerate(self.open_spots(k["x"], k["y"], 32, 3, 21)):
+            self.add(f"fd{i}", x, y)
+        for i, (x, y) in enumerate(self.open_spots(k["x"], k["y"], 55, 8, 22)):
+            self.add(f"fdg{i}", x, y)
+        rd = self.road("Dara-e-Sabz", "Sar-e-Kotal")
+        rl = float(np.hypot(*np.diff(rd, axis=0).T).sum())
+        self.roadside("fd_car", rd, rl - 170, side=0, dh=0, dz=1.5)
+        self.roadside("fd_r0", rd, rl - 150, side=-6)
+        self.roadside("fd_r1", rd, rl - 145, side=6)
+        # --- The Pass + the fortress chase: waypoints along the mountain road Deh-e-Bagh -> Qala-e-Kohna
+        fort_rd = self.road("Deh-e-Bagh", "Qala-e-Kohna")
+        self.route_fr = self._waypoints(fort_rd, 80.0)
+        fl = float(np.hypot(*np.diff(fort_rd, axis=0).T).sum())
+        ax, ay, ah = self.along(fort_rd, 0.4 * fl)
+        a = math.radians(ah)
+        cands = [(ax + math.cos(a) * sd, ay + math.sin(a) * sd) for sd in (12, -12, 18, -18, 8)]
+        px, py = first_clear(cands)
+        self.add("ps_amb", px, py, ah)
+        assert len(self.route_fr) >= 30, len(self.route_fr)
+        # the boss's getaway pickup waits inside the gate, pointing at the road
+        gx, gy, _, _ = self.p["fortress_gate"]
+        wx, wy, _, _ = self.route_fr[-3]
+        self.add("fort_gate_car", gx, gy - 4, math.degrees(math.atan2(-(wx - gx), wy - gy)), dz=1.5)
+        fx, fy, _, _ = self.p["fort_start"]
+        self.add("fort_jeep", fx + 7, fy - 6, 0, dz=1.5)
+        # --- Vulture: the Black Stone remnants flee Sang-e-Siah -> Dara-e-Sabz -> Darwaza
+        rd = np.concatenate([self.road("Sang-e-Siah", "Dara-e-Sabz"), self.road("Dara-e-Sabz", "Darwaza Checkpoint")])
+        self.route_cv = self._waypoints(rd, 80.0)
+        assert len(self.route_cv) >= 40, len(self.route_cv)
+        assert len(self.route_fr) <= 56 and len(self.route_cv) <= 64, (len(self.route_fr), len(self.route_cv))
+
+    def _waypoints(self, pts, spacing):
+        """(x, y, z, heading) every `spacing` units along a polyline, ending exactly at its end."""
+        total = float(np.hypot(*np.diff(pts, axis=0).T).sum())
+        out = []
+        d = 0.0
+        while d < total - spacing * 0.5:
+            x, y, h = self.along(pts, d)
+            out.append((x, y, self.w.height(x, y) + 1.0, h % 360))
+            d += spacing
+        x, y, h = self.along(pts, total - 1)
+        out.append((x, y, self.w.height(x, y) + 1.0, h % 360))
+        return out
 
     def substitute(self, src):
         def rep(m):
@@ -504,6 +578,13 @@ def generated_header(points):
             init.append(f"amb_spot_y[{si * 12 + k}] = {y:.2f}")
             init.append(f"amb_spot_z[{si * 12 + k}] = {z:.2f}")
     init.append(f"amb_site_count = {len(amb)}")
+    for prefix, route in (("fr", points.route_fr), ("cv", points.route_cv)):
+        for i, (x, y, z, h) in enumerate(route):
+            init.append(f"{prefix}_x[{i}] = {x:.2f}")
+            init.append(f"{prefix}_y[{i}] = {y:.2f}")
+            init.append(f"{prefix}_z[{i}] = {z:.2f}")
+            init.append(f"{prefix}_h[{i}] = {h:.2f}")
+        init.append(f"{prefix}_count = {len(route)}")
     for i, (model, key) in enumerate(points.cars):
         x, y, z, h = points.p[key]
         init.append(f"CREATE_CAR_GENERATOR {x:.2f} {y:.2f} {z:.2f} {h:.2f} {model} -1 -1 0 0 0 0 10000 car_gen")

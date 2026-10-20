@@ -2,7 +2,7 @@
 // Wave 1 comes on foot, waves 2 and 3 arrive by pickup with men on the slopes.
 MISSION_START
 {
-LVAR_INT ally[3] enemy[6] eblip[6] car[2] blip cp stage wave k alive dead timer cartimer
+LVAR_INT ally[3] enemy[8] eblip[8] car[2] blip cp stage wave k alive dead timer cartimer
 LVAR_FLOAT px py pz d
 GOSUB m4_main
 IF HAS_DEATHARREST_BEEN_EXECUTED
@@ -21,7 +21,7 @@ WHILE k < 3
     k += 1
 ENDWHILE
 k = 0
-WHILE k < 6
+WHILE k < 8
     enemy[k] = -1
     eblip[k] = -1
     k += 1
@@ -40,6 +40,7 @@ REQUEST_MODEL 162
 REQUEST_MODEL 355
 REQUEST_MODEL 352
 REQUEST_MODEL 359
+REQUEST_MODEL 349
 REQUEST_MODEL BOBCAT
 LOAD_ALL_MODELS_NOW
 GOSUB m4_contact
@@ -160,7 +161,7 @@ IF cartimer > 0
 ENDIF
 alive = 0
 k = 0
-WHILE k < 6
+WHILE k < 8
     IF NOT enemy[k] = -1
         IF IS_CHAR_DEAD enemy[k]
             IF NOT eblip[k] = -1
@@ -175,7 +176,7 @@ WHILE k < 6
 ENDWHILE
 IF alive = 0
     k = 0
-    WHILE k < 6
+    WHILE k < 8
         IF NOT enemy[k] = -1
             MARK_CHAR_AS_NO_LONGER_NEEDED enemy[k]
             enemy[k] = -1
@@ -239,15 +240,21 @@ IF wave = 3
     GIVE_WEAPON_TO_CHAR enemy[3] WEAPONTYPE_MICRO_UZI 500
     GIVE_WEAPON_TO_CHAR enemy[4] WEAPONTYPE_AK47 500
     GIVE_WEAPON_TO_CHAR enemy[5] WEAPONTYPE_ROCKETLAUNCHER 4
+    CREATE_CHAR PEDTYPE_MISSION1 247 @cp_att4@ enemy[6]
+    CREATE_CHAR PEDTYPE_MISSION1 162 @cp_att5@ enemy[7]
+    GIVE_WEAPON_TO_CHAR enemy[6] WEAPONTYPE_AK47 500
+    GIVE_WEAPON_TO_CHAR enemy[7] WEAPONTYPE_SHOTGUN 100
     SET_CAR_FORWARD_SPEED car[1] 16.0
     TASK_KILL_CHAR_ON_FOOT enemy[2] scplayer
     TASK_KILL_CHAR_ON_FOOT enemy[3] scplayer
     TASK_KILL_CHAR_ON_FOOT enemy[4] scplayer
     TASK_KILL_CHAR_ON_FOOT enemy[5] scplayer
+    TASK_KILL_CHAR_ON_FOOT enemy[6] scplayer
+    TASK_KILL_CHAR_ON_FOOT enemy[7] scplayer
     cartimer = 14
 ENDIF
 k = 0
-WHILE k < 6
+WHILE k < 8
     IF NOT enemy[k] = -1
         SET_CHAR_ACCURACY enemy[k] 35
         SET_CHAR_DROPS_WEAPONS_WHEN_DEAD enemy[k] FALSE
@@ -282,7 +289,7 @@ RETURN
 
 m4_attack_all:
 k = 0
-WHILE k < 6
+WHILE k < 8
     IF NOT enemy[k] = -1
         IF NOT IS_CHAR_DEAD enemy[k]
             TASK_KILL_CHAR_ON_FOOT enemy[k] scplayer
@@ -329,7 +336,7 @@ IF NOT cp = -1
     cp = -1
 ENDIF
 k = 0
-WHILE k < 6
+WHILE k < 8
     IF NOT eblip[k] = -1
         REMOVE_BLIP eblip[k]
         eblip[k] = -1

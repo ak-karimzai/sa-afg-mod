@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.2.0 - 2026-10-20 - action missions, police uniform
+
+Twelve missions instead of eight. Four new action missions are woven into the story, the raids got harder, and the
+finale is a chase followed by a helicopter hunt.
+
+- **Burj-e-Khak** (new, after Darwaza): the Shahrak doctor has been kidnapped. Night raid on the ruins east of the
+  base: eight guards on patrol, two marksmen with sniper rifles on the perimeter. Free the doctor (he follows you),
+  get him into a vehicle and drive him home while Black Stone pickups waiting along the road ram you and shoot from
+  the passenger seat. Fails if the doctor dies.
+- **Fuel and Fire** (new, after Aid Convoy): the Black Stone fuel dump in occupied Sar-e-Kotal. Approach at dusk, plant
+  charges on three fuel stacks (stand in the marker for three seconds; the stacks are real explosive barrels, you can
+  also shoot them), the alarm brings a pickup and more men up the road, a 30-second detonation timer, then get clear
+  or finish them.
+- **The Pass** (new, after Black Stone): a convoy of three trucks and two escort pickups actually drives up the
+  mountain road at night. From the ambush position above the switchbacks you must destroy all three trucks with the
+  RPG and sniper rifle before they get past; the escort dismounts and hunts you once the first truck burns.
+- **Vulture** (new finale): the Black Stone remnants flee down the Ghorband valley in five pickups. Take the Hunter and
+  destroy them before any of them crosses Darwaza. Then the sunrise epilogue with Rahim.
+- **Qala-e-Kohna**: 14 defenders (two RPG teams), you get an RPG at the gate, and when his guard is nearly gone
+  Siahdast runs for a pickup and flees down the mountain road with a gunner: take the squad's jeep and stop him before
+  he reaches the valley.
+- **Black Stone**: a reinforcement pickup comes up from the valley when the camp is alerted (12 bandits).
+- **Darwaza**: the last wave has eight attackers.
+- **Police uniform**: the policemen (Captain Nasir, the Darwaza checkpoint, the "police volunteer" outfit) now wear
+  Afghan dress in the Taliban style: kameez and shalwar, a waistcoat, a snug turban, a beard. The textures are derived
+  from your own game's `gta3.img` at build time (`tools/build.py --game <folder>`), so no Rockstar texture is stored
+  in the repository or shipped unchanged.
+- Vehicles now drive without road nodes: convoys follow waypoint routes along the generated roads in straight
+  segments (`TASK_CAR_DRIVE_TO_COORD` in straight-line mode); chasers use the node-free ram-player behaviour.
+- New developer tool `tools/dev/pedview.py` renders a ped model with any texture (used to design the uniform).
+
+
 ## 1.1.0 - 2026-10-20 - "real missions"
 
 The eight missions were rebuilt to play like the game's own: every one now opens with a cutscene (fixed cameras,

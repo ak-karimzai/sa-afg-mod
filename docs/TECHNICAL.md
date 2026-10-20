@@ -16,10 +16,12 @@ tools/
   afg/export.py         terrain tiles + LODs, COL3 archives, IDE/IPL, radar tiles
   afg/gamedata.py       gta.dat, zones, water, timecyc, FXT, script coordinates, gta3sc compile
   afg/text.py           all in-game text
+  afg/peds.py           police uniform: repaints csher/dsher from the player's gta3.img (hat removed, turban, beard)
   afg/music.py          music synthesis (Karplus-Strong strings, membranes, drones) -> mp3 via ffmpeg
   scripts/main.sc       main thread: start, story characters, contact markers, save point, wardrobe, unlocks
-  scripts/main/*.sc     ambient life + 8 missions (GTA3script, compiled by gta3sc)
+  scripts/main/*.sc     ambient life + 12 missions (GTA3script, compiled by gta3sc)
   dev/quick_scripts.py  rebuilds only FXT + scripts (~8 s) and optionally installs them into a game folder
+  dev/pedview.py        renders a ped model from gta3.img with any TXD (bind pose, front/side/back)
   scripts/cleo/afghan_radio.sc   CLEO radio
   installer/            INSTALL.bat / install.ps1 / install.py (+ uninstall)
   dev/render.py         software preview renderer that reads the *generated* files back
@@ -47,13 +49,34 @@ first time, to download elevation tiles into `cache/`.
   The camera points (`talk_*`, `cam_*_w/_c/_p` and their `*t` targets) are generated in `gamedata.Points._mission_details`
   and are moved to the first candidate that is not inside a building footprint (`Points._clear`).
 - **On-screen timers / counters / bars** need *global* variables: `mission_timer`, `mission_counter` and `mission_bar`.
-- **Vehicles driven by AI**: there are no path nodes, so only node-free behaviours are used: `SET_CAR_ESCORT_CAR_REAR`
-  for the convoy jeep (steers directly at an offset from the truck) and `SET_CAR_FORWARD_SPEED` for pickups that
-  "arrive" and then unload their passengers (`TASK_LEAVE_ANY_CAR`, then `TASK_KILL_CHAR_ON_FOOT`).
+- **Vehicles driven by AI**: there are no path nodes, so only node-free behaviours are used:
+  - `SET_CAR_ESCORT_CAR_REAR` for the convoy jeep (steers directly at an offset from the truck);
+  - `SET_CAR_FORWARD_SPEED` for pickups that "arrive" and unload their passengers (`TASK_LEAVE_ANY_CAR`, then
+    `TASK_KILL_CHAR_ON_FOOT`);
+  - **waypoint routes** for convoys (The Pass, Vulture, Siahdast's getaway): `gamedata.Points._waypoints` samples a
+    road polyline every 80 units into the global arrays `fr_*` (Deh-e-Bagh -> Qala-e-Kohna) and `cv_*`
+    (Sang-e-Siah -> Darwaza); the mission re-issues `TASK_CAR_DRIVE_TO_COORD ... MODE_STRAIGHTLINE` to the next
+    waypoint when the car is within 24 units of the current one, and every 4 s as a stuck-guard;
+  - `TASK_CAR_MISSION ... 3` (`MISSION_RAMPLAYER_CLOSE`) for the chasers in Burj-e-Khak, which steers at the player
+    without nodes, plus `TASK_DRIVE_BY` for the passenger. Chasers are spawned ahead of the player and started when
+    within 60 units, because the ram behaviour falls back to node pathfinding (and stalls) when far away.
 - **Peds that should not fight yet** (the roadblock, the shakedown) are created as `PEDTYPE_CIVMALE` with
   `STAY_IN_SAME_PLACE`, and switched with `SET_CHAR_RELATIONSHIP ... PED_HATE PEDTYPE_PLAYER1` + a kill task.
 - `string` arguments (animation names) are written as bare words, not quoted: gta3sc only allows quoted strings in
   CLEO (`--cs`) mode. gta3sc upper-cases them; SA's animation lookup is case-insensitive.
+
+## Police uniform (afg/peds.py)
+
+- The sheriff models `csher` (283) and `dsher` (288) share one mesh and UV layout; only the 128x256 texture differs.
+  `tools/dev/pedview.py` was used to map texture regions to body parts (shirt, sleeves, forearm skin, trousers,
+  hat, hair, face, emblems). The ped bind pose has **+X up** and **+Z forward**.
+- The hat is textured from a 28x14 patch whose brim and crown pixels overlap, so it cannot be turned into a cap by
+  transparency; instead the whole hat patch is made transparent (the head is fully modelled underneath) and the scalp
+  above the brow line (model x > 0.785) plus the back of the head is painted as a turban, from a geometry mask
+  rasterised in UV space. The beard is painted the same way (jaw region x 0.55..0.705, front half, mouth left out).
+- Output TXDs are written with the mod's own writer (8888 + mipmaps, alpha flag set) into
+  `modloader/afghanistan/models/`, which ModLoader serves instead of the `gta3.img` originals. The source texture is
+  read from the player's own `gta3.img` (`build.py --game` / `GTA_SA_DIR`), so nothing of Rockstar's is in the repo.
 
 ## Design decisions
 

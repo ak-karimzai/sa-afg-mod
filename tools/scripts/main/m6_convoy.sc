@@ -12,7 +12,7 @@ GOSUB m5_cleanup
 MISSION_END
 
 m5_main:
-SCRIPT_NAME AFM5
+SCRIPT_NAME AFM6
 truck = -1
 jeep = -1
 blip = -1
@@ -241,7 +241,7 @@ PRINT_NOW AF5_11 5500 1
 WAIT 5500
 CLEAR_CHAR_TASKS elder
 GOSUB m5_cut_end
-mission_progress = 5
+mission_progress = 6
 ADD_SCORE player 2000
 PRINT_WITH_NUMBER_BIG M_PASS 2000 5000 1
 REGISTER_MISSION_PASSED AF5_T
