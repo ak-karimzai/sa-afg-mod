@@ -5,3 +5,5 @@ release/
 tools/vendor/
 __pycache__/
 *.pyc
+# your own game files (gta_sa.exe etc.) - never committed or shipped
+local/

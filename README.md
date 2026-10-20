@@ -32,6 +32,9 @@ dry-highland weather cycle, character outfits and a new radar map.
 
 ## Install
 
+New to modding? [docs/INSTALL_GUIDE.md](docs/INSTALL_GUIDE.md) walks through every step, from an untouched
+Steam, Rockstar Launcher or disc copy to the first mission, including how to get the right `gta_sa.exe`.
+
 ### What you need
 
 1. **Your own copy of GTA San Andreas PC (classic, not the *Definitive Edition*)** with the **1.0 US executable**.
@@ -154,7 +157,7 @@ The first build downloads elevation tiles into `cache/dem/` and synthesises the 
 | `tools/scripts/` | Main thread, ambient life, 8 missions and the radio (GTA3script) |
 | `tools/installer/` | `INSTALL.bat`, `install.ps1`, `install.py`, uninstallers |
 | `third_party/` | Bundled ModLoader, CLEO 5 and SilentPatch release archives with licences and checksums |
-| `docs/` | Story, technical notes, map and previews |
+| `docs/` | Story, step-by-step install guide, technical notes, map and previews |
 | `dist/`, `release/`, `cache/`, `build/` | Build output (not in git) |
 
 ## Credits & licences
