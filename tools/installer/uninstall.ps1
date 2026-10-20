@@ -1,4 +1,4 @@
-# Removes everything the Afghanistan mod installed. Your original game files were never changed.
+# Removes the Afghanistan mod. ModLoader, CLEO and SilentPatch stay installed (other mods may use them).
 param([string]$GameDir = "")
 $ErrorActionPreference = "Stop"
 if (-not $GameDir) {
@@ -13,5 +13,5 @@ foreach ($p in $paths) {
     $full = Join-Path $GameDir $p
     if (Test-Path $full) { Remove-Item -Recurse -Force $full; Write-Host "removed $p" }
 }
-Write-Host "Afghanistan mod removed. Load a vanilla save or start a new game." -ForegroundColor Green
+Write-Host "Afghanistan mod removed (ModLoader, CLEO and SilentPatch were left installed). Load a vanilla save or start a new game." -ForegroundColor Green
 Read-Host "Press Enter to close"

@@ -17,13 +17,14 @@ from afg import export, layout, world  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DIST = os.path.join(ROOT, "dist")
 ID_BASE = 11682  # first free model id in vanilla SA (see docs/TECHNICAL.md)
+VERSION = "1.0.1"
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-music", action="store_true")
     ap.add_argument("--no-scripts", action="store_true")
-    ap.add_argument("--zip", action="store_true", help="also create release/AfghanistanMod-v1.0.zip")
+    ap.add_argument("--zip", action="store_true", help="also create release/AfghanistanMod-v<VERSION>.zip")
     args = ap.parse_args()
     t0 = time.time()
     if os.path.exists(DIST):
@@ -72,11 +73,13 @@ def main():
     inst = os.path.join(ROOT, "tools", "installer")
     for fn in ("INSTALL.bat", "UNINSTALL.bat", "install.ps1", "uninstall.ps1", "install.py"):
         shutil.copy(os.path.join(inst, fn), os.path.join(DIST, fn))
-    for fn in ("README.md",):
+    for fn in ("README.md", "CHANGELOG.md"):
         shutil.copy(os.path.join(ROOT, fn), os.path.join(DIST, fn))
+    # ModLoader, CLEO 5 and SilentPatch (MIT), installed by the installer when missing
+    shutil.copytree(os.path.join(ROOT, "third_party"), os.path.join(DIST, "requirements"))
     shutil.copytree(os.path.join(ROOT, "docs"), os.path.join(DIST, "docs"))
     if args.zip:
-        z = shutil.make_archive(os.path.join(ROOT, "release", "AfghanistanMod-v1.0"), "zip", DIST)
+        z = shutil.make_archive(os.path.join(ROOT, "release", f"AfghanistanMod-v{VERSION}"), "zip", DIST)
         print(f"zip: {z} ({os.path.getsize(z) / 1e6:.0f} MB)")
     print(f"done in {time.time() - t0:.0f}s -> {DIST}")
 

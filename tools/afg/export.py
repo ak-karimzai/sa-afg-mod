@@ -166,6 +166,19 @@ class Exporter:
         cm.boxes = boxes
         return cm
 
+    def _bounds_col(self, name, pts):
+        """Bounds-only collision. Every placed model needs one, or CEntity::GetBoundRect crashes."""
+        dcol.Sections.init_sections(3)
+        p = np.asarray(pts, np.float64)
+        mn, mx = p.min(0), p.max(0)
+        ctr = (mn + mx) / 2
+        cm = dcol.ColModel()
+        cm.version = 3
+        cm.model_name = name
+        cm.model_id = self.ids[name]
+        cm.bounds = dcol.TBounds(tuple(mn), tuple(mx), tuple(ctr), float(np.linalg.norm(mx - ctr)))
+        return cm
+
     def terrain(self):
         w = self.w
         # LOD tiles first so their IPL indices are 0..NL*NL-1
@@ -178,7 +191,9 @@ class Exporter:
                 block = w.z[r0:r0 + LOD_TILE + 1, c0:c0 + LOD_TILE + 1]
                 centre = (x0, y0, float((block.min() + block.max()) / 2))
                 self.new_id(name, TXD_TERRAIN, 3000)
-                self._write_tile_dff(name, self._tile_mesh(r0, c0, LOD_TILE, LOD_STEP, centre, lowered=1.2))
+                mesh = self._tile_mesh(r0, c0, LOD_TILE, LOD_STEP, centre, lowered=1.2)
+                self._write_tile_dff(name, mesh)
+                self.col_files.setdefault("afg_lod.col", []).append(self._bounds_col(name, mesh[0]))
                 lod_index[(li, lj)] = len(self.inst)
                 self.inst.append((self.ids[name], name, *centre, 0, 0, 0, 1, -1))
         for ti in range(NT):
@@ -208,9 +223,10 @@ class Exporter:
             self.new_id(name, TXD_BUILD, dist)
             rw.write_dff(os.path.join(self.out, name + ".dff"), m, name)
             boxes = [dcol.TBox(tuple(a), tuple(b), dcol.TSurface(s, 0, 0, 0xCC)) for a, b, s in m.boxes]
-            if not boxes:
-                continue  # no collision (bushes)
-            props.append(self._col_model(name, [], [], [], boxes))
+            if boxes:
+                props.append(self._col_model(name, [], [], [], boxes))
+            else:  # walk-through (bushes): bounds only
+                props.append(self._bounds_col(name, m.pos))
         self.col_files["afg_props.col"] = props
         for model, x, y, z, hd in self.L.items:
             self.inst.append((self.ids[model], model, x, y, z, *quat_heading(hd), -1))

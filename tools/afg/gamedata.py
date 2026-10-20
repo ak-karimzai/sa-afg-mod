@@ -7,6 +7,7 @@ import subprocess
 
 import numpy as np
 
+from . import asi
 from .text import TEXT
 from .world import HALF
 
@@ -15,7 +16,7 @@ REF = os.path.join(TOOLS, "reference")
 GTA3SC = os.path.join(TOOLS, "vendor", "gta3sc", "build", "gta3sc")
 SCRIPTS = os.path.join(TOOLS, "scripts")
 COL_FILES = ["afg_land00", "afg_land01", "afg_land02", "afg_land10", "afg_land11", "afg_land12",
-             "afg_land20", "afg_land21", "afg_land22", "afg_props"]
+             "afg_land20", "afg_land21", "afg_land22", "afg_props", "afg_lod"]
 
 
 # =========================================================================== points
@@ -428,6 +429,7 @@ def build(world, layout, game_dir, root, skip_scripts=False):
     for c in COL_FILES:
         shutil.move(os.path.join(models, c + ".col"), os.path.join(afg, c + ".col"))
     write_gta_dat(os.path.join(ml, "data", "gta.dat"))
+    asi.build(os.path.join(ml, "afghan_limits.asi"))  # extra-objects directory 550 -> 16000
     write_zones(world, os.path.join(afg, "map.zon"), os.path.join(afg, "info.zon"))
     write_water(os.path.join(ml, "data", "water.dat"))
     write_timecyc(os.path.join(ml, "data", "timecyc.dat"))
