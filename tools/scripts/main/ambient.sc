@@ -71,6 +71,13 @@ WHILE amb_k < 10
     GENERATE_RANDOM_FLOAT_IN_RANGE 0.0 359.0 amb_d
     SET_CHAR_HEADING amb_ped[amb_k] amb_d
     MARK_MODEL_AS_NO_LONGER_NEEDED amb_model
+    // a third of the villagers stand talking, the rest wait and then wander
+    IF amb_site_kind[amb_active] = 0
+        GENERATE_RANDOM_INT_IN_RANGE 0 3 amb_i
+        IF amb_i = 0
+            TASK_PLAY_ANIM amb_ped[amb_k] IDLE_chat PED 4.0 TRUE FALSE FALSE FALSE -1
+        ENDIF
+    ENDIF
     amb_k += 1
 ENDWHILE
 amb_timer = 6
@@ -142,8 +149,12 @@ WHILE amb_k < 10
     IF NOT amb_ped[amb_k] = -1
     AND DOES_CHAR_EXIST amb_ped[amb_k]
         IF NOT IS_CHAR_DEAD amb_ped[amb_k]
-            GENERATE_RANDOM_INT_IN_RANGE 0 3 amb_i
-            IF amb_i > 0
+            GENERATE_RANDOM_INT_IN_RANGE 0 4 amb_i
+            IF amb_i = 1
+            AND amb_site_kind[amb_active] = 0
+                TASK_PLAY_ANIM amb_ped[amb_k] IDLE_chat PED 4.0 TRUE FALSE FALSE FALSE -1
+            ENDIF
+            IF amb_i > 1
                 GENERATE_RANDOM_INT_IN_RANGE 0 12 amb_j
                 amb_i = amb_active
                 amb_i *= 12

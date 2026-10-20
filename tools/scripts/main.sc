@@ -9,8 +9,12 @@
 VAR_INT mission_progress mission_shown contact_blip safe_blip wardrobe_blip
 VAR_INT save_armed wardrobe_armed style style_model style_count style_ok
 VAR_INT car_gen pickup hunter_given
-VAR_INT mission_timer mission_counter  // used by on-screen timers / counters in missions
+VAR_INT mission_timer mission_counter mission_bar  // on-screen timer / counter / bar used by the missions
 VAR_FLOAT contact_x contact_y contact_z player_x player_y player_z
+// story characters, always in the world when you are near: 0 Kaka Rahim (bazaar), 1 Captain Nasir (police
+// station), 2 Major Hamid (Camp Sangar HQ). Missions use these handles for their cutscenes.
+VAR_INT contact_ped[3] contact_model[3] npc_i
+VAR_FLOAT npc_x[3] npc_y[3] npc_z[3] npc_h[3] npc_d
 // ambient population (filled by //@GENERATED_INIT@)
 VAR_FLOAT amb_site_x[8] amb_site_y[8] amb_spot_x[96] amb_spot_y[96] amb_spot_z[96]
 VAR_INT amb_site_kind[8] amb_site_count amb_ped[10] amb_active amb_i amb_j amb_k amb_model amb_timer
@@ -67,6 +71,28 @@ style_model = 128
 hunter_given = 0
 amb_active = -1
 
+// story characters
+contact_model[0] = 158          // Kaka Rahim: old farmer
+npc_x[0] = @bazaar_uncle.x@
+npc_y[0] = @bazaar_uncle.y@
+npc_z[0] = @bazaar_uncle.z@
+npc_h[0] = @bazaar_uncle.h@
+contact_model[1] = 288          // Captain Nasir: desert sheriff
+npc_x[1] = @police_nasir.x@
+npc_y[1] = @police_nasir.y@
+npc_z[1] = @police_nasir.z@
+npc_h[1] = @police_nasir.h@
+contact_model[2] = 287          // Major Hamid: army
+npc_x[2] = @base_major.x@
+npc_y[2] = @base_major.y@
+npc_z[2] = @base_major.z@
+npc_h[2] = @base_major.h@
+npc_i = 0
+WHILE npc_i < 3
+    contact_ped[npc_i] = -1
+    npc_i += 1
+ENDWHILE
+
 //@GENERATED_INIT@
 
 ADD_SPRITE_BLIP_FOR_CONTACT_POINT @save@ RADAR_SPRITE_SAVEHOUSE safe_blip
@@ -94,6 +120,7 @@ IF IS_PLAYER_PLAYING player
     SET_CAR_DENSITY_MULTIPLIER 0.0
 
     IF flag_player_on_mission = 0
+        GOSUB update_npcs
         GOSUB update_contact
         GOSUB check_contact
         GOSUB check_save
@@ -118,7 +145,44 @@ IF IS_PLAYER_PLAYING player
 ENDIF
 GOTO main_loop
 
-// =============================================================================
+// ----------------------------------------------------------------- story characters
+// Rahim, Nasir and Hamid stand at their places whenever you are within 140 units; they are removed
+// again when you are far away. They cannot be hurt and never run from gunfire.
+update_npcs:
+GET_CHAR_COORDINATES scplayer player_x player_y player_z
+npc_i = 0
+WHILE npc_i < 3
+    GET_DISTANCE_BETWEEN_COORDS_2D player_x player_y npc_x[npc_i] npc_y[npc_i] npc_d
+    IF contact_ped[npc_i] = -1
+        IF npc_d < 140.0
+            GOSUB npc_spawn
+        ENDIF
+    ELSE
+        IF NOT DOES_CHAR_EXIST contact_ped[npc_i]
+            contact_ped[npc_i] = -1
+        ELSE
+            IF npc_d > 220.0
+                DELETE_CHAR contact_ped[npc_i]
+                contact_ped[npc_i] = -1
+            ENDIF
+        ENDIF
+    ENDIF
+    npc_i += 1
+ENDWHILE
+RETURN
+
+npc_spawn:
+REQUEST_MODEL contact_model[npc_i]
+LOAD_ALL_MODELS_NOW
+CREATE_CHAR PEDTYPE_CIVMALE contact_model[npc_i] npc_x[npc_i] npc_y[npc_i] npc_z[npc_i] contact_ped[npc_i]
+SET_CHAR_HEADING contact_ped[npc_i] npc_h[npc_i]
+SET_CHAR_PROOFS contact_ped[npc_i] TRUE TRUE TRUE TRUE TRUE
+SET_CHAR_NEVER_TARGETTED contact_ped[npc_i] TRUE
+SET_CHAR_STAY_IN_SAME_PLACE contact_ped[npc_i] TRUE
+MARK_MODEL_AS_NO_LONGER_NEEDED contact_model[npc_i]
+RETURN
+
+// ----------------------------------------------------------------- mission contact marker
 update_contact:
 IF mission_shown = mission_progress
     RETURN

@@ -17,8 +17,9 @@ tools/
   afg/gamedata.py       gta.dat, zones, water, timecyc, FXT, script coordinates, gta3sc compile
   afg/text.py           all in-game text
   afg/music.py          music synthesis (Karplus-Strong strings, membranes, drones) -> mp3 via ffmpeg
-  scripts/main.sc       main thread: start, contacts, save point, wardrobe, unlocks
+  scripts/main.sc       main thread: start, story characters, contact markers, save point, wardrobe, unlocks
   scripts/main/*.sc     ambient life + 8 missions (GTA3script, compiled by gta3sc)
+  dev/quick_scripts.py  rebuilds only FXT + scripts (~8 s) and optionally installs them into a game folder
   scripts/cleo/afghan_radio.sc   CLEO radio
   installer/            INSTALL.bat / install.ps1 / install.py (+ uninstall)
   dev/render.py         software preview renderer that reads the *generated* files back
@@ -35,6 +36,24 @@ python3 tools/build.py --zip   # ~4 min (music synthesis is most of it); --no-mu
 
 Needs Python 3.10+ with numpy, scipy and Pillow, plus ffmpeg (optional: without it the tracks stay as WAV). It also needs internet the
 first time, to download elevation tiles into `cache/`.
+
+## Mission scripts
+
+- **Story characters** (`contact_ped[0..2]` in `main.sc`) are created by the main thread when the player is within
+  140 units of their spot and deleted beyond 220. They are proofed, never targeted and `STAY_IN_SAME_PLACE`. Missions
+  use these global handles for their cutscenes and only create the character themselves if the handle is stale.
+- **Cutscenes** use `SET_FIXED_CAMERA_POSITION` + `POINT_CAMERA_AT_POINT ... JUMP_CUT`, `SWITCH_WIDESCREEN` and
+  `TASK_PLAY_ANIM ... IDLE_chat PED` for the speaker; the player is warped onto the contact marker behind a short fade.
+  The camera points (`talk_*`, `cam_*_w/_c/_p` and their `*t` targets) are generated in `gamedata.Points._mission_details`
+  and are moved to the first candidate that is not inside a building footprint (`Points._clear`).
+- **On-screen timers / counters / bars** need *global* variables: `mission_timer`, `mission_counter` and `mission_bar`.
+- **Vehicles driven by AI**: there are no path nodes, so only node-free behaviours are used: `SET_CAR_ESCORT_CAR_REAR`
+  for the convoy jeep (steers directly at an offset from the truck) and `SET_CAR_FORWARD_SPEED` for pickups that
+  "arrive" and then unload their passengers (`TASK_LEAVE_ANY_CAR`, then `TASK_KILL_CHAR_ON_FOOT`).
+- **Peds that should not fight yet** (the roadblock, the shakedown) are created as `PEDTYPE_CIVMALE` with
+  `STAY_IN_SAME_PLACE`, and switched with `SET_CHAR_RELATIONSHIP ... PED_HATE PEDTYPE_PLAYER1` + a kill task.
+- `string` arguments (animation names) are written as bare words, not quoted: gta3sc only allows quoted strings in
+  CLEO (`--cs`) mode. gta3sc upper-cases them; SA's animation lookup is case-insensitive.
 
 ## Design decisions
 
@@ -80,7 +99,9 @@ first time, to download elevation tiles into `cache/`.
   index bounds, prelight and UV counts, and texture decoding.
 - `tools/dev/render.py` rasterises the generated DFF/TXD/IPL with RenderWare winding and the game's quaternion
   convention. The images are in `docs/preview_*.png`.
-- `main.scm` and `afghan_radio.cs` compile with gta3sc. The fixed global slots were checked in the emitted IR.
+- `main.scm` and `afghan_radio.cs` compile with gta3sc. The fixed global slots were checked in the emitted IR
+  (`gta3sc ... -emit-ir2`), as were the new camera, checkpoint, escort and passenger opcodes.
+- Every cutscene camera, NPC spot and roadblock was tested against the generated building footprints and the road mask.
 - The installer was tested end to end against a synthetic game folder with an IMG v2 archive.
 
 ## Troubleshooting

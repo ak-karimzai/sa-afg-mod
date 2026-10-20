@@ -7,9 +7,11 @@ dry-highland weather cycle, character outfits and a new radar map.
 
 ![In game: Qala-e-Naw](docs/screenshot_qala_e_naw.png)
 
-> **Status: version 1.0.1.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
-> Qala-e-Naw with the mission hints, radar markers and text working. The 8 missions have not been played through
-> yet, so please report what happens. See [CHANGELOG.md](CHANGELOG.md).
+> **Status: version 1.1.0.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
+> Qala-e-Naw with the mission hints, radar markers and text working. Version 1.1 rebuilt the eight missions with
+> cutscenes, staged objectives, mid-mission events and fail states (see [CHANGELOG.md](CHANGELOG.md)). The scripts
+> compile and were checked against the map geometry, but the missions have not been played through yet, so please
+> report what happens.
 
 ![Map](docs/map.png)
 
@@ -20,8 +22,8 @@ dry-highland weather cycle, character outfits and a new radar map.
 | **Map** | Real elevation data (SRTM), 576 terrain tiles + 144 LOD tiles, dirt roads routed through the mountains with switchbacks, irrigated fields, poplar-lined roads, orchards |
 | **Places** | Qala-e-Naw (town, bazaar, mosque, police station, your safehouse), Camp Sangar (army base with runway, hangars, helipads), villages Deh-e-Bagh, Dara-e-Sabz, Sar-e-Kotal, Shahrak, Darwaza Checkpoint, Sang-e-Siah bandit camp, Qala-e-Kohna mountain fortress, Burj-e-Khak ruins |
 | **Buildings** | 28 new models: mud-brick *qala* compounds with towers, houses, mosques with turquoise domes and minarets, bazaar stalls, watchtowers, HESCO walls, guard towers, tents, hangars, fortress, ruins, trees |
-| **Story** | 8 missions: *Homecoming, Market Day, Medicine for Shahrak, Darwaza, Aid Convoy, Black Stone, Eagle's Nest, Qala-e-Kohna* – see [docs/STORY.md](docs/STORY.md) |
-| **People** | Villagers (men, women, elders), farmers, police at the checkpoint, soldiers at the base, Black Stone bandits – all reuse SA's rural/desert peds |
+| **Story** | 8 missions with cutscenes, dialogue, checkpoints, timers, damage bars and fail states: *Homecoming, Market Day, Medicine for Shahrak, Darwaza, Aid Convoy, Black Stone, Eagle's Nest, Qala-e-Kohna* – see [docs/STORY.md](docs/STORY.md) |
+| **People** | Kaka Rahim, Captain Nasir and Major Hamid stand at their places all game long; villagers (men, women, elders) who chat and wander, police at the checkpoint, soldiers at the base, Black Stone bandits – all reuse SA's rural/desert peds |
 | **Character styles** | Wardrobe in your courtyard: villager, farmer, shepherd, city clothes (CJ), police volunteer (after mission 4), army fatigues (after mission 5) |
 | **Music** | 6 original instrumental tracks (rubab, dutar, nay flute, tabla, dhol, harmonium drone in Afghan modes and rhythms such as *mughulchi* 7/8 and *attan*), played by an in-car radio |
 | **Atmosphere** | New timecyc: deep-blue high-altitude sky, dusty horizon, golden dawn/dusk, longer view distance; weather cycle with clear days, haze, rare dust storms and rain |
@@ -40,7 +42,7 @@ dry-highland weather cycle, character outfits and a new radar map.
 
 ### Steps
 
-1. Download `AfghanistanMod-v1.0.1.zip` and unzip it anywhere.
+1. Download `AfghanistanMod-v1.1.0.zip` and unzip it anywhere.
 2. Back up your saves (`Documents\GTA San Andreas User Files`) if you care about them: saving in this mod can
    overwrite save slots.
 3. Run the installer and select your GTA San Andreas folder (the one with `gta_sa.exe`):
@@ -95,10 +97,15 @@ game folder to a local disk such as `C:\Games\GTA San Andreas` (not `C:\Program 
 ## How to play
 
 - You start in your **safehouse courtyard** in Qala-e-Naw.
-- **Missions:** walk into the marker of the contact shown on the radar:
-  - **R** – Kaka Rahim at the bazaar
-  - **police badge** – Captain Nasir
-  - **flag** – Major Hamid at Camp Sangar
+- **Missions:** walk into the red marker next to the contact shown on the radar. The contacts stand there whenever
+  you are nearby:
+  - **R** – Kaka Rahim at his stall in the bazaar
+  - **police badge** – Captain Nasir in front of the police station
+  - **flag** – Major Hamid in front of the HQ at Camp Sangar
+
+  Each mission starts with a short cutscene, then shows its objective at the bottom of the screen. Vehicles and
+  destinations get a radar blip and a red checkpoint; timers, damage bars and enemy counters appear at the top right.
+  Mission 6 needs a vehicle of your own (take one of the parked pickups or Rahim's truck from mission 1).
 - **Save:** the save-disk marker in your courtyard.
 - **Wardrobe:** the T-shirt marker in your courtyard. Each visit switches to the next outfit.
 - **Radio:** in any vehicle the Afghan radio plays automatically. Press **N** for the next track and **M** to turn it on/off.
@@ -116,7 +123,7 @@ game folder to a local disk such as `C:\Games\GTA San Andreas` (not `C:\Program 
 
 ## Known issues / limitations
 
-- The missions have not been played through yet. If something breaks, see the troubleshooting list in
+- The missions compile and were checked against the map, but have not been played through yet. If something breaks, see the troubleshooting list in
   [docs/TECHNICAL.md](docs/TECHNICAL.md#troubleshooting) and send `modloader\modloader.log` and `cleo.log`.
 - No interiors. Houses are solid.
 - No AI traffic or random pedestrians; only script-spawned people near settlements.
@@ -132,6 +139,7 @@ Requirements: Python 3 with `numpy`, `scipy` and `Pillow`, `ffmpeg` (music), CMa
 ```bash
 tools/setup.sh                  # fetches DragonFF and builds gta3sc into tools/vendor/
 python3 tools/build.py --zip    # writes dist/ and release/AfghanistanMod-v<version>.zip
+python3 tools/dev/quick_scripts.py --install "/path/to/GTA San Andreas"   # text + scripts only (~8 s)
 ```
 
 The first build downloads elevation tiles into `cache/dem/` and synthesises the music into `cache/music/` (slow).
@@ -143,7 +151,7 @@ The first build downloads elevation tiles into `cache/dem/` and synthesises the 
 | Path | Content |
 |---|---|
 | `tools/build.py`, `tools/afg/` | The generator: world, layout, models, collision, textures, data files, music, `afghan_limits.asi` |
-| `tools/scripts/` | Mission and radio scripts (GTA3script) |
+| `tools/scripts/` | Main thread, ambient life, 8 missions and the radio (GTA3script) |
 | `tools/installer/` | `INSTALL.bat`, `install.ps1`, `install.py`, uninstallers |
 | `third_party/` | Bundled ModLoader, CLEO 5 and SilentPatch release archives with licences and checksums |
 | `docs/` | Story, technical notes, map and previews |

@@ -12,23 +12,27 @@ All people, groups and events are fictional. The terrain is real, but the towns 
 | Character | Who | Where |
 |---|---|---|
 | Farid Noori | the player | safehouse compound, Qala-e-Naw |
-| Kaka Rahim | Farid's uncle, a bazaar trader | the bazaar (radar **R**) |
-| Captain Nasir | district police commander | police station, Qala-e-Naw (radar **police badge**) |
-| Major Hamid | army officer | HQ at Camp Sangar (radar **flag**) |
+| Kaka Rahim | Farid's uncle, a bazaar trader | at his stall in the bazaar (radar **R**) |
+| Captain Nasir | district police commander | in front of the police station, Qala-e-Naw (radar **police badge**) |
+| Major Hamid | army officer | in front of the HQ at Camp Sangar (radar **flag**) |
+| Karim and Jawed | Hamid's soldiers | ride with you in missions 5 and 8 |
 | Siahdast | leader of the Black Stone | Qala-e-Kohna fortress |
 
 ## Missions
 
-| # | Mission | Contact | What you do | Reward |
+Every mission begins with a cutscene at the contact and ends with a scene at the destination. Objectives are shown
+with radar blips and red checkpoints; timers, damage bars and enemy counters appear at the top right of the screen.
+
+| # | Mission | Contact | What happens | Reward |
 |---|---|---|---|---|
-| 1 | **Homecoming** | Rahim | Take his old pickup and deliver flour to the baker in Deh-e-Bagh. | $300 |
-| 2 | **Market Day** | Rahim | Black Stone extortionists are "taxing" the bazaar. Take your father's pistol and drive them out (4 enemies). | $500 |
-| 3 | **Medicine for Shahrak** | Rahim | Race medicine across the plain to the Shahrak clinic in 2½ minutes. | $800 |
-| 4 | **Darwaza** | Nasir | At night, help three policemen hold Darwaza Checkpoint at the gorge mouth against 3 waves of attackers. You keep the AK-47. | $1,500 |
-| 5 | **Aid Convoy** | Hamid | Drive the aid truck from Camp Sangar up the Ghorband valley to Dara-e-Sabz and survive the ambush on the way. | $2,000 |
-| 6 | **Black Stone** | Nasir | Raid the bandit camp at Sang-e-Siah at the head of the valley (10 enemies, one with an RPG). | $3,000 |
-| 7 | **Eagle's Nest** | Hamid | Fly a helicopter over Qala-e-Kohna to scout it, dodge the RPGs and land back on the helipad. | $2,500 |
-| 8 | **Qala-e-Kohna** | Hamid | Before dawn, lead an army squad up the mountain, storm the fortress and kill Siahdast. | $10,000 |
+| 1 | **Homecoming** | Rahim | Take his old pickup and deliver flour to the baker in Deh-e-Bagh. Half way, a Black Stone "road tax" post demands money and opens fire if you do not stop. Keep the pickup in one piece. | $300 |
+| 2 | **Market Day** | Rahim | Four Black Stone men are shaking down a stall keeper. Take your father's pistol and drive them out of the bazaar while the villagers run for cover. They drop their "tax" money. | $500 |
+| 3 | **Medicine for Shahrak** | Rahim | Race the medicine crate across the plain to the Shahrak clinic in 3 minutes. The doctor runs out to meet you, and Captain Nasir phones afterwards. | $800 |
+| 4 | **Darwaza** | Nasir | At night, help three policemen hold Darwaza Checkpoint against three waves. The first wave comes on foot, the next two arrive by pickup with men on the slopes and an RPG gunner. If all three policemen die, the checkpoint falls. You keep the AK-47. | $1,500 |
+| 5 | **Aid Convoy** | Hamid | Drive the aid truck from Camp Sangar up the Ghorband valley with Karim and Jawed following in an army jeep. At the ambush an RPG hits the road, a bandit pickup blocks it and the soldiers dismount to cover you. Deliver to the elder of Dara-e-Sabz. | $2,000 |
+| 6 | **Black Stone** | Nasir | Raid the bandit camp at Sang-e-Siah at first light. Ten guards walk their rounds until one of them notices you. Clear the camp, then recover the stolen aid. | $3,000 |
+| 7 | **Eagle's Nest** | Hamid | Fly a helicopter to Qala-e-Kohna and circle it until the photos are done, while an RPG team fires at you. Land back on the helipad. | $2,500 |
+| 8 | **Qala-e-Kohna** | Hamid | Before dawn, lead four soldiers up the mountain to the fortress gate. The gate is blown, you storm the fortress and kill Siahdast. Epilogue: tea with Rahim at sunrise. | $10,000 |
 
 After the last mission the valley is free to explore. A **Hunter** helicopter and a **Rhino** tank appear at Camp Sangar.
 

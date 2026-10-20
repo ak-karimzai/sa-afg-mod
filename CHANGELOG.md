@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.1.0 - 2026-10-20 - "real missions"
+
+The eight missions were rebuilt to play like the game's own: every one now opens with a cutscene (fixed cameras,
+speaking characters, letterbox), has staged objectives with checkpoints and on-screen counters, mid-mission events,
+proper fail states and a closing scene.
+
+- Story characters are now **always in the world**: Kaka Rahim at his bazaar stall, Captain Nasir in front of the
+  police station, Major Hamid at Camp Sangar HQ. They cannot be hurt and are the people you talk to in the cutscenes.
+- **Homecoming**: a Black Stone "road tax" post half way to Deh-e-Bagh (they shout, then shoot if you do not stop),
+  a damage bar for Rahim's pickup, the baker meets you at the village.
+- **Market Day**: the extortionists are shaking down a stall keeper (hands up, gun drawn) while you talk; bystanders
+  flee when the shooting starts; the bandits drop cash; closing scene with Rahim.
+- **Medicine for Shahrak**: 3-minute timer with a "hurry" warning, the doctor runs out to the pickup, Captain Nasir
+  phones you afterwards to set up the next mission.
+- **Darwaza**: briefing at the station, three policemen you must keep alive (mission fails if they all die), waves
+  2 and 3 arrive in pickups with men on the slopes, an RPG gunner in the last wave, the sergeant talks to you.
+- **Aid Convoy**: an army jeep with two soldiers (Karim and Jawed) follows the truck; at the ambush an RPG hits
+  the road, a bandit pickup blocks it, the soldiers dismount and fight; aid-truck damage bar; the elder of
+  Dara-e-Sabz receives the aid.
+- **Black Stone**: raid at first light; guards walk their rounds until they notice you (distance, gunfire or being
+  hit); afterwards find the stolen aid (briefcase pickup) to finish.
+- **Eagle's Nest**: a "photos" progress bar fills while you circle the fortress under RPG fire; getting out of the
+  helicopter sends you back to it; debrief with Hamid.
+- **Qala-e-Kohna**: lead the squad to the gate, the gate is blown, storm the fortress; epilogue at sunrise in your
+  courtyard with Rahim.
+- Villagers now stand and chat in groups instead of only wandering.
+- New developer tool `tools/dev/quick_scripts.py`: rebuilds only text + scripts in about 8 s and can install them
+  into a game folder.
+
+
 ## 1.0.1 – 2026-10-20
 
 First version that starts in the game (tested under Wine on Linux: the game loads into Qala-e-Naw and the first

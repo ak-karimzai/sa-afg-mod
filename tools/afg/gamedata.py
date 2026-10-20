@@ -32,6 +32,7 @@ class Points:
         for s in world.sites.values():
             self.add("site_" + s["key"][4:].lower(), s["x"], s["y"])
         self._derived()
+        self._mission_details()
 
     def add(self, name, x, y, h=0.0, dz=1.0, z=None):
         z = self.w.height(x, y) + dz if z is None else z
@@ -58,12 +59,13 @@ class Points:
         heading = math.degrees(math.atan2(-dx, dy))  # GTA heading: 0 = north, counter-clockwise
         return float(x), float(y), heading
 
-    def roadside(self, name, pts, dist, side=7.0):
+    def roadside(self, name, pts, dist, side=7.0, dh=0.0, dz=1.2):
+        """Point `dist` along a road, `side` units right of the travel direction, heading = travel + dh."""
         x, y, h = self.along(pts, dist)
         a = math.radians(h)
         # right-hand side of travel direction
         rx, ry = math.cos(a), math.sin(a)
-        self.add(name, x + rx * side, y + ry * side, h, dz=1.2)
+        self.add(name, x + rx * side, y + ry * side, h + dh, dz=dz)
 
     def near_road(self, x, y):
         best = None
@@ -194,6 +196,103 @@ class Points:
             key = "pk_health_" + _slug(name)
             self.add(key, x, y, dz=0.8)
             self.pickups.append((1240, 0, key))
+
+    # approximate half extents (x, y) of the solid part of each prefab, in model space (see buildings.py)
+    SOLID = {"afg_shops": (11, 5), "afg_police": (9.2, 8.5), "afg_mosque": (12, 12), "afg_house_s": (5, 5),
+             "afg_house_l": (6, 6), "afg_well": (1, 1), "afg_wtower": (2.5, 2.5), "afg_barracks": (10, 6),
+             "afg_tent": (5, 5), "afg_tent_dk": (5, 5), "afg_contain": (3.5, 1.5), "afg_hesco": (5, 1),
+             "afg_gtower": (2.5, 2.5), "afg_hangar": (20, 15), "afg_haystack": (2, 2), "afg_cp_hut": (2, 2),
+             "afg_sandbags": (3, 0.5), "afg_barrier": (2, 0.4), "afg_cave": (8, 6), "afg_fortress": (23.6, 23.6),
+             "afg_ruinwall": (10, 1), "afg_ruintower": (3, 3), "afg_poplar": (0.6, 0.6), "afg_mulberry": (1, 1)}
+
+    def _clear(self, px, py, margin=0.5):
+        """True if (px, py) is not inside the solid footprint of any placed building or prop."""
+        for model, x, y, _, h in self.L.items:
+            if abs(x - px) > 30 or abs(y - py) > 30 or model not in self.SOLID:
+                continue
+            ex, ey = self.SOLID[model]
+            a = math.radians(-h)
+            dx, dy = px - x, py - y
+            lx = dx * math.cos(a) - dy * math.sin(a)
+            ly = dx * math.sin(a) + dy * math.cos(a)
+            if abs(lx) <= ex + margin and abs(ly) <= ey + margin:
+                return False
+        return True
+
+    def _mission_details(self):
+        """Cutscene cameras, roadblocks, NPC marks and other per-mission points (v1.1 'real missions')."""
+        s = self.w.sites
+        # --- story contacts: marker m, contact 2.5 units east of it facing west, player on the marker facing east.
+        # The wide shot is taken from the south (open side: bazaar lane / in front of the station facade).
+        for marker in ("bazaar", "police", "base_hq"):
+            x, y, z, _ = self.p[marker]
+            g = z - 1.0
+            self.add(f"talk_{marker}", x, y, 270)
+            # two-shot: the first candidate position that is not inside a building
+            for dx, dy in ((1.25, -4.6), (-2.5, -4.2), (5.0, -4.2), (1.25, 4.6), (-2.5, 4.2), (5.0, 4.2)):
+                if self._clear(x + dx, y + dy):
+                    break
+            self.add(f"cam_{marker}_w", x + dx, y + dy, z=g + 1.9)
+            self.add(f"cam_{marker}_wt", x + 1.25, y + 0.3, z=g + 1.1)
+            self.add(f"cam_{marker}_c", x - 0.9, y - 0.85, z=g + 1.75)    # over the player's shoulder -> contact
+            self.add(f"cam_{marker}_ct", x + 2.5, y, z=g + 1.5)
+            self.add(f"cam_{marker}_p", x + 3.4, y + 0.85, z=g + 1.75)    # over the contact's shoulder -> player
+            self.add(f"cam_{marker}_pt", x, y, z=g + 1.5)
+
+        def arrival(prefix, marker):
+            """An NPC waiting 4 units north of a village marker, the spot he walks to, and a camera on both."""
+            x, y, _, _ = self.p[marker]
+            self.add(f"{prefix}", x + 1.0, y + 4.0, 180)
+            self.add(f"{prefix}_to", x - 2.5, y + 1.5, 90)
+            for dx, dy in ((-7.0, -3.0), (7.0, -3.0), (-7.0, 3.0), (7.0, 3.0), (0.0, -8.0)):
+                if self._clear(x + dx, y + dy):
+                    break
+            self.add(f"cam_{prefix}", x + dx, y + dy, dz=2.0)
+            self.add(f"cam_{prefix}_t", x - 1.0, y + 2.0, dz=1.2)
+
+        # --- mission 1: Black Stone roadblock half way to Deh-e-Bagh, the baker at the village
+        rd = self.road("Qala-e-Naw", "Deh-e-Bagh")
+        rl = float(np.hypot(*np.diff(rd, axis=0).T).sum())
+        self.roadside("m1_block", rd, 0.52 * rl, side=3.5, dh=35, dz=1.5)   # pickup angled across half the road
+        self.roadside("m1_thug0", rd, 0.52 * rl - 7, side=-2.5, dh=180)
+        self.roadside("m1_thug1", rd, 0.52 * rl - 5, side=5.0, dh=180)
+        arrival("m1_baker", "deh_e_bagh")
+        # --- mission 2: the stall keeper being shaken down, bystanders
+        tx, ty, _, _ = self.p["thug0"]
+        self.add("m2_victim", tx + 2.2, ty, 90)
+        for dx, dy in ((1.0, -6.5), (1.0, 6.5), (-6.0, -3.0), (8.0, -3.0)):
+            if self._clear(tx + dx, ty + dy):
+                break
+        self.add("cam_m2", tx + dx, ty + dy, dz=1.8)
+        self.add("cam_m2_t", tx + 1.0, ty + 0.2, dz=1.0)
+        bx, by = s["Qala-e-Naw"]["x"], s["Qala-e-Naw"]["y"]
+        for i, (dx, dy) in enumerate([(-12, -5), (6, 6), (32, -4)]):
+            self.add(f"m2_civ{i}", bx + dx, by + dy)
+        # --- mission 3: the doctor at Shahrak
+        arrival("m3_doctor", "shahrak")
+        # --- mission 4: attackers arriving by pickup, flankers
+        valley = self.road("Darwaza Checkpoint", "Dara-e-Sabz")
+        self.roadside("cp_car", valley, 190, side=0, dh=180, dz=1.5)
+        self.roadside("cp_car2", valley, 215, side=0, dh=180, dz=1.5)
+        for i, (dist, side) in enumerate([(130, -22), (145, 24)]):
+            self.roadside(f"cp_flank{i}", valley, dist, side=side)
+        # --- mission 5: escort jeep, roadblock and RPG strike at the ambush, the elder
+        ax, ay, _, _ = self.p["aid_truck"]
+        self.add("m5_jeep", ax, ay - 14, 0, dz=1.5)
+        length = float(np.hypot(*np.diff(valley, axis=0).T).sum())
+        amb = 0.6 * length
+        self.roadside("m5_block", valley, amb + 55, side=3.5, dh=35, dz=1.5)
+        self.roadside("m5_boom", valley, amb + 30, side=0)
+        arrival("m5_elder", "dara_e_sabz")
+        # --- mission 6: the stolen aid in front of the cave
+        c = s["Sang-e-Siah"]
+        self.add("m6_loot", c["x"], c["y"] + 14, dz=0.8)
+        # --- mission 8: epilogue in the safehouse courtyard
+        sx, sy, _, _ = self.p["safehouse"]
+        self.add("m8_rahim", sx, sy + 3.0, 180)
+        self.add("m8_farid", sx, sy, 0)
+        self.add("cam_end", sx - 4.5, sy - 3.5, dz=1.9)
+        self.add("cam_end_t", sx, sy + 1.5, dz=1.2)
 
     def substitute(self, src):
         def rep(m):
