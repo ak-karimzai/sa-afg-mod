@@ -2,17 +2,18 @@
 
 A total-conversion mod for **classic GTA San Andreas (PC)**. It replaces the San Andreas map with a
 36 × 36 km slice of real Afghan terrain (the Shomali plain and the Ghorband valley north of Kabul,
-scaled 1:6). It adds a new 12-mission story, original Afghan-style music, new zone names, a
+scaled 1:6). It adds a new 24-mission story in two acts, original Afghan-style music, new zone names, a
 dry-highland weather cycle, character outfits and a new radar map.
 
 ![In game: Qala-e-Naw](docs/screenshot_qala_e_naw.png)
 
-> **Status: version 1.2.0.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
+> **Status: version 1.3.0.** The game starts and loads into the map (tested under Wine on Linux): you spawn in
 > Qala-e-Naw with the mission hints, radar markers and text working. Version 1.1 rebuilt the missions with cutscenes,
-> staged objectives and fail states; 1.2 adds four action missions (hostage rescue, demolition, convoy ambush,
-> helicopter hunt), a getaway chase in the finale and the police uniform (see [CHANGELOG.md](CHANGELOG.md)). The scripts
-> compile and were checked against the map geometry, but the missions have not been played through yet, so please
-> report what happens.
+> staged objectives and fail states; 1.2 added four action missions and the police uniform; 1.3 adds a second act of
+> twelve missions (motorised buzkashi, a brakeless truck descent with a ramp jump, a silent raid with a noise meter, a
+> magnet-helicopter heist, a tank assault, a traitor, a siege and an air chase; see [CHANGELOG.md](CHANGELOG.md)).
+> The scripts compile and were checked against the map geometry, but the missions have not been played through yet,
+> so please report what happens.
 
 ![Map](docs/map.png)
 
@@ -23,7 +24,7 @@ dry-highland weather cycle, character outfits and a new radar map.
 | **Map** | Real elevation data (SRTM), 576 terrain tiles + 144 LOD tiles, dirt roads routed through the mountains with switchbacks, irrigated fields, poplar-lined roads, orchards |
 | **Places** | Qala-e-Naw (town, bazaar, mosque, police station, your safehouse), Camp Sangar (army base with runway, hangars, helipads), villages Deh-e-Bagh, Dara-e-Sabz, Sar-e-Kotal, Shahrak, Darwaza Checkpoint, Sang-e-Siah bandit camp, Qala-e-Kohna mountain fortress, Burj-e-Khak ruins |
 | **Buildings** | 28 new models: mud-brick *qala* compounds with towers, houses, mosques with turquoise domes and minarets, bazaar stalls, watchtowers, HESCO walls, guard towers, tents, hangars, fortress, ruins, trees |
-| **Story** | 12 missions with cutscenes, dialogue, checkpoints, timers, damage bars and fail states: deliveries, a bazaar shoot-out, a checkpoint defence, a hostage rescue, an escorted convoy, a demolition raid, a camp raid, a convoy ambush, helicopter scouting, the fortress assault with a getaway chase, and a Hunter hunt – see [docs/STORY.md](docs/STORY.md) |
+| **Story** | 24 missions in two acts with cutscenes, dialogue, checkpoints, timers, damage bars and fail states. Act one: deliveries, a bazaar shoot-out, a checkpoint defence, a hostage rescue, an escorted convoy, a demolition raid, a camp raid, a convoy ambush, helicopter scouting, the fortress assault with a getaway chase, a Hunter hunt. Act two: a bazaar raid, motorised buzkashi, a car theft, sniper overwatch, a sandstorm rescue, a betrayal, a brakeless truck descent, a silent raid, a magnet-helicopter heist, a tank assault, a mountain chase, a siege and an air chase – see [docs/STORY.md](docs/STORY.md) |
 | **People** | Kaka Rahim, Captain Nasir and Major Hamid stand at their places all game long; villagers (men, women, elders) who chat and wander, soldiers at the base, Black Stone bandits – all reuse SA's rural/desert peds. The police wear Afghan dress in the Taliban style (kameez, waistcoat, turban, beard), repainted from your game's own textures at build time |
 | **Character styles** | Wardrobe in your courtyard: villager, farmer, shepherd, city clothes (CJ), police volunteer (after mission 4), army fatigues (after mission 6) |
 | **Music** | 6 original instrumental tracks (rubab, dutar, nay flute, tabla, dhol, harmonium drone in Afghan modes and rhythms such as *mughulchi* 7/8 and *attan*), played by an in-car radio |
@@ -46,7 +47,7 @@ Steam, Rockstar Launcher or disc copy to the first mission, including how to get
 
 ### Steps
 
-1. Download `AfghanistanMod-v1.2.0.zip` and unzip it anywhere.
+1. Download `AfghanistanMod-v1.3.0.zip` and unzip it anywhere.
 2. Back up your saves (`Documents\GTA San Andreas User Files`) if you care about them: saving in this mod can
    overwrite save slots.
 3. Run the installer and select your GTA San Andreas folder (the one with `gta_sa.exe`):
@@ -109,7 +110,7 @@ game folder to a local disk such as `C:\Games\GTA San Andreas` (not `C:\Program 
 
   Each mission starts with a short cutscene, then shows its objective at the bottom of the screen. Vehicles and
   destinations get a radar blip and a red checkpoint; timers, damage bars and enemy counters appear at the top right.
-  Missions 5, 7 and 8 need a vehicle of your own (take one of the parked pickups or Rahim's truck from mission 1).
+  Several missions need a vehicle of your own (take one of the parked pickups or Rahim's truck from mission 1).
 - **Save:** the save-disk marker in your courtyard.
 - **Wardrobe:** the T-shirt marker in your courtyard. Each visit switches to the next outfit.
 - **Radio:** in any vehicle the Afghan radio plays automatically. Press **N** for the next track and **M** to turn it on/off.

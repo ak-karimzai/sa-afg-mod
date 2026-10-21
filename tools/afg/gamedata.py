@@ -354,6 +354,195 @@ class Points:
         self.route_cv = self._waypoints(rd, 80.0)
         assert len(self.route_cv) >= 40, len(self.route_cv)
         assert len(self.route_fr) <= 56 and len(self.route_cv) <= 64, (len(self.route_fr), len(self.route_cv))
+        self._act2(first_clear)
+
+    def _act2(self, first_clear):
+        """v1.3 'The Snow Road': points for missions 13-20."""
+        s, w = self.w.sites, self.w
+
+        def slope(x, y, step=10.0):
+            return max(abs(w.height(x + dx, y + dy) - w.height(x, y)) for dx, dy in
+                       ((step, 0), (-step, 0), (0, step), (0, -step)))
+
+        # --- 13 Ashes: night raid on the bazaar. Pickups come in from the Darwaza road, bikes from the
+        # Deh-e-Bagh road, the leader flees back towards Deh-e-Bagh.
+        qn = s["Qala-e-Naw"]
+        rd = self.road("Qala-e-Naw", "Darwaza Checkpoint")
+        self.roadside("as_car0", rd, 230, side=0, dh=180, dz=1.5)
+        self.roadside("as_car1", rd, 262, side=0, dh=180, dz=1.5)
+        qb = self.road("Qala-e-Naw", "Deh-e-Bagh")
+        self.roadside("as_bike0", qb, 220, side=-3, dh=180, dz=1.2)
+        self.roadside("as_bike1", qb, 240, side=3, dh=180, dz=1.2)
+        for i, (dx, dy) in enumerate([(-60, 12), (-38, -12), (40, 10), (62, -8)]):
+            x, y = first_clear([(qn["x"] + dx, qn["y"] + dy), (qn["x"] + dx, qn["y"] - dy), (qn["x"] + dx + 8, qn["y"])])
+            self.add(f"as_foot{i}", x, y)
+        pts, d = self.near_road(qn["x"], qn["y"])
+        self.roadside("as_pcar", pts, d + 84, side=7, dz=1.5)        # Rahim's pickup for the chase
+        self.roadside("as_flee", pts, d - 30, side=-6, dz=1.5)       # the leader's getaway pickup
+        self.route_qb = self._waypoints(qb, 80.0)
+        assert 10 <= len(self.route_qb) <= 24, len(self.route_qb)
+        # --- 14 Courier: the money car parked at the Deh-e-Bagh roadside with its guards; drop-off at the station
+        db = s["Deh-e-Bagh"]
+        pts, d = self.near_road(db["x"], db["y"])
+        self.roadside("co_car", pts, d + 95, side=-6, dz=1.5)
+        for i, (dd, side) in enumerate([(-8, -10), (6, -11), (14, -4), (-2, 4)]):
+            self.roadside(f"co_g{i}", pts, d + 95 + dd, side=side, dh=180)
+        px, py, _, _ = self.p["police"]
+        pts, d = self.near_road(px, py)
+        self.roadside("co_drop", pts, d + 12, side=6, dz=1.2)
+        for i, (dd, side) in enumerate([(30, 7), (46, -7)]):
+            self.roadside(f"co_chase{i}", qb, 60 + dd, side=side, dh=180, dz=1.5)   # chasers wait on the town road
+        # --- 15 The Wedding: the party in Dara-e-Sabz, a sniper post on the highest ground around it, three groups
+        # of attackers converging on foot, a technical up the valley road at the end
+        ds = s["Dara-e-Sabz"]
+        for i, (x, y) in enumerate(self.open_spots(ds["x"], ds["y"], 22, 8, 31)):
+            self.add(f"wd_guest{i}", x, y)
+        ex, ey = first_clear([(ds["x"] + 4, ds["y"] + 6), (ds["x"] - 6, ds["y"] + 4), (ds["x"], ds["y"] - 8)])
+        self.add("wd_elder", ex, ey, 180)
+        best = None
+        for ang in range(0, 360, 10):
+            a = math.radians(ang)
+            x, y = ds["x"] + 115 * math.cos(a), ds["y"] + 115 * math.sin(a)
+            if abs(x) > 2900 or abs(y) > 2900 or not self._clear(x, y):
+                continue
+            h = w.height(x, y)
+            if best is None or h > best[0]:
+                best = (h, x, y, ang)
+        _, x, y, post_ang = best
+        self.add("wd_post", x, y, (math.degrees(math.atan2(-(ds["x"] - x), ds["y"] - y))) % 360)
+        self.add("cam_wd", ds["x"] - 7, ds["y"] - 5, dz=2.0)
+        self.add("cam_wd_t", ex, ey, dz=1.2)
+        angs = [post_ang + 150, post_ang + 210, post_ang + 90]
+        for g, ang in enumerate(angs):
+            for i, (dr, da) in enumerate([(0, 0), (8, 6), (-6, -7), (14, -4)]):
+                a = math.radians(ang + da)
+                self.add(f"wd_a{g}_{i}", ds["x"] + (175 + dr) * math.cos(a), ds["y"] + (175 + dr) * math.sin(a))
+        valley = self.road("Darwaza Checkpoint", "Dara-e-Sabz")
+        vl = float(np.hypot(*np.diff(valley, axis=0).T).sum())
+        self.roadside("wd_car", valley, vl - 260, side=0, dh=0, dz=1.5)
+        # --- 16 Dust Storm: the Dodo down on the plain east of the base, the pilot beside it, Haji Gul's men
+        # already there, two pickups waiting between the wreck and the base
+        cands = [(2650 + dx, -1050 + dy) for dx in (0, -120, 120, -240, 240) for dy in (0, -150, 150, 300)]
+        cands = [c for c in cands if abs(c[0]) < 2900 and abs(c[1]) < 2900]
+        cands.sort(key=lambda c: slope(*c))
+        cx, cy = cands[0]
+        self.add("ds_crash", cx, cy, 300, dz=1.6)
+        self.add("ds_pilot", cx + 6, cy - 3, 90)
+        for i, (dx, dy) in enumerate([(-18, 14), (16, 18), (-22, -12), (20, -16), (0, 26), (26, 2)]):
+            self.add(f"ds_e{i}", cx + dx, cy + dy)
+        self.add("ds_ecar", cx - 30, cy + 30, 135, dz=1.5)
+        bx, by = s["Camp Sangar"]["x"], s["Camp Sangar"]["y"]
+        for i, t in enumerate((0.35, 0.55)):
+            x, y = cx + (bx - cx) * t + (60 if i else -60), cy + (by - cy) * t
+            self.add(f"ds_chase{i}", x, y, (math.degrees(math.atan2(-(cx - x), cy - y))) % 360, dz=1.5)
+        self.add("cam_ds", cx - 9, cy - 9, dz=2.5)
+        self.add("cam_ds_t", cx, cy, dz=1.5)
+        # --- 17 Judas: the meeting in burnt-out Sar-e-Kotal, the trap closes with police pickups from the valley road
+        sk = s["Sar-e-Kotal"]
+        mx, my = first_clear([(sk["x"] + 6, sk["y"] - 10), (sk["x"] - 10, sk["y"] + 6), (sk["x"], sk["y"] + 14)])
+        self.add("jd_meet", mx, my, 0)
+        self.add("jd_inf", mx, my + 3, 180)
+        self.add("cam_jd", mx - 6, my - 4, dz=1.9)
+        self.add("cam_jd_t", mx, my + 1.5, dz=1.3)
+        for i, (x, y) in enumerate(self.open_spots(sk["x"], sk["y"], 60, 6, 41)):
+            self.add(f"jd_e{i}", x, y)
+        rd = self.road("Dara-e-Sabz", "Sar-e-Kotal")
+        rl = float(np.hypot(*np.diff(rd, axis=0).T).sum())
+        self.roadside("jd_car0", rd, rl - 140, side=0, dh=0, dz=1.5)
+        self.roadside("jd_car1", rd, rl - 175, side=0, dh=0, dz=1.5)
+        # --- 18 Iron Harvest: the Rhino waits past the checkpoint; three roadblocks up the valley; the camp
+        self.roadside("ih_tank", valley, 70, side=0, dh=0, dz=1.8)
+        camp_rd = self.road("Dara-e-Sabz", "Sang-e-Siah")
+        cl = float(np.hypot(*np.diff(camp_rd, axis=0).T).sum())
+        for j, (road, dist) in enumerate([(valley, 0.42 * vl), (valley, 0.78 * vl), (camp_rd, 0.5 * cl)]):
+            self.roadside(f"ih_b{j}_car", road, dist, side=0, dh=90, dz=1.5)
+            for i, (dd, side) in enumerate([(12, -6), (12, 7), (20, -13), (22, 12)]):
+                self.roadside(f"ih_b{j}_e{i}", road, dist + dd, side=side, dh=180)
+        self.roadside("ih_tech", camp_rd, cl - 120, side=0, dh=180, dz=1.5)
+        # --- 19 Traitor's Road: the jeep at the foot of the mountain road
+        fort_rd = self.road("Deh-e-Bagh", "Qala-e-Kohna")
+        self.roadside("tr_jeep", fort_rd, 14, side=6, dz=1.5)
+        # --- 20 Haji Gul: the siege of Camp Sangar, then the helicopter from Burj-e-Khak northwards
+        # the attack comes up the Qala-e-Naw road, so the fight is at the road's entry into the base perimeter
+        rd = self.road("Qala-e-Naw", "Camp Sangar")
+        rl = float(np.hypot(*np.diff(rd, axis=0).T).sum())
+        self.roadside("hg_gate", rd, rl - 235, side=0, dh=180)
+        for i, (dd, side) in enumerate([(10, -9), (10, 9), (16, -4), (16, 4), (6, -14), (6, 14)]):
+            self.roadside(f"hg_ally{i}", rd, rl - 235 + dd, side=side, dh=180)
+        for i, (dd, side) in enumerate([(0, -8), (0, 8), (-12, -14), (-12, 14), (-24, -5), (-24, 5), (-36, -11), (-36, 11)]):
+            self.roadside(f"hg_att{i}", rd, rl - 340 + dd, side=side)
+        for i, dd in enumerate((390, 430, 470)):
+            self.roadside(f"hg_car{i}", rd, rl - dd, side=0, dh=0, dz=1.5)
+        self.roadside("cam_hg", rd, rl - 215, side=12, dz=3.0)
+        self.roadside("cam_hg_t", rd, rl - 250, side=0, dz=1.5)
+        r = s["Burj-e-Khak"]
+        self.add("hg_heli", r["x"] + 10, r["y"] + 34, 0, dz=1.8)
+        for i, (x, y) in enumerate([(2900, -2000), (2900, -600), (2800, 1300), (2650, 2950)]):
+            self.add(f"hg_wp{i}", x, y, z=w.height(x, y) + 110)
+        # --- 14 Buzkashi: the flattest open ground 250-450 units from Qala-e-Naw, well away from the roads
+        best = None
+        for ang in range(0, 360, 12):
+            for rad in (260, 330, 400, 460):
+                a = math.radians(ang)
+                x, y = qn["x"] + rad * math.cos(a), qn["y"] + rad * math.sin(a)
+                if abs(x) > 2800 or abs(y) > 2800:
+                    continue
+                _, dist = self.near_road(x, y)
+                roadd = min(float(np.hypot(r["pts"][:, 0] - x, r["pts"][:, 1] - y).min()) for r in w.road_paths)
+                if roadd < 90:
+                    continue
+                sl = max(slope(x + dx, y + dy, 20.0) for dx, dy in ((0, 0), (50, 0), (-50, 0), (0, 50), (0, -50)))
+                if best is None or sl < best[0]:
+                    best = (sl, x, y)
+        _, bx, by = best
+        self.add("bz_center", bx, by, 0)
+        self.add("bz_pit", bx + 65, by, 0)
+        self.add("bz_pbike", bx - 70, by - 10, 90, dz=1.2)
+        for i in range(5):
+            a = math.radians(90 + i * 60)
+            self.add(f"bz_r{i}", bx + 55 * math.cos(a), by + 55 * math.sin(a), (math.degrees(-a) + 90) % 360, dz=1.2)
+        for i, ang in enumerate((200, 250)):
+            a = math.radians(ang)
+            x, y = bx + 170 * math.cos(a), by + 170 * math.sin(a)
+            self.add(f"bz_car{i}", x, y, (math.degrees(math.atan2(-(bx - x), by - y))) % 360, dz=1.5)
+        self.add("cam_bz", bx - 12, by - 12, dz=3.0)
+        # --- 19 Jingle Truck: the truck at the fortress gate (fort_gate_car), the ramp and the block at the bottom
+        fl = float(np.hypot(*np.diff(fort_rd, axis=0).T).sum())
+        x, y, h = self.along(fort_rd, 150)
+        self.add("jt_ramp", x, y, (h + 180) % 360, dz=0.0)
+        self.roadside("jt_block0", fort_rd, 70, side=3.0, dh=60, dz=1.5)
+        self.roadside("jt_block1", fort_rd, 84, side=-3.0, dh=120, dz=1.5)
+        self.roadside("jt_chase0", fort_rd, fl - 120, side=4, dh=180, dz=1.5)
+        self.roadside("jt_chase1", fort_rd, fl - 100, side=-4, dh=180, dz=1.5)
+        x, y, _, _ = self.p["fort_start"]
+        self.add("jt_drop", x - 12, y - 10, 0)
+        self.add("cam_jt", x + 6, y - 18, dz=2.2)
+        gx, gy, _, _ = self.p["fort_gate_car"]
+        self.add("cam_jt_t", gx, gy, dz=1.4)
+        # --- 20 Echoes in the Gorge: the column camped at 55% of the mountain road, sentries around it, charge spots
+        # on the uphill side above the road, the drop-off and the safe point further down
+        ec = 0.55 * fl
+        for i, dd in enumerate((-30, -6, 18)):
+            self.roadside(f"ec_t{i}", fort_rd, ec + dd, side=0, dh=0, dz=1.5)
+        for i, (dd, side) in enumerate([(-50, 8), (-38, -9), (-14, 10), (6, -10), (32, 9), (44, -7)]):
+            self.roadside(f"ec_s{i}", fort_rd, ec + dd, side=side, dh=180)
+        for i, dd in enumerate((-26, 0, 26)):
+            x, y, h = self.along(fort_rd, ec + dd)
+            a = math.radians(h)
+            # uphill side of the road: whichever side is higher
+            lx, ly = x - math.cos(a) * 16, y - math.sin(a) * 16
+            rx, ry = x + math.cos(a) * 16, y + math.sin(a) * 16
+            cx, cy = (lx, ly) if w.height(lx, ly) > w.height(rx, ry) else (rx, ry)
+            self.add(f"ec_c{i}", cx, cy)
+        self.roadside("ec_start", fort_rd, ec - 160, side=6, dh=0)
+        self.roadside("ec_safe", fort_rd, ec - 230, side=5, dh=0)
+        for i, dd in enumerate((-40, -20, 0, 20, 40)):
+            self.roadside(f"ec_x{i}", fort_rd, ec + dd, side=0)
+        # --- 21 Flying Carpet: the sedan in the fortress courtyard, the drop point at the motor pool
+        f = s["Qala-e-Kohna"]
+        self.add("fc_car", f["x"], f["y"] - 6, 90, z=f["z"] + 1.5)
+        mx, my, _, _ = self.p["base_motorpool"]
+        self.add("fc_drop", mx + 20, my + 10, 0, dz=1.0)
 
     def _waypoints(self, pts, spacing):
         """(x, y, z, heading) every `spacing` units along a polyline, ending exactly at its end."""
@@ -473,13 +662,16 @@ def write_timecyc(path):
             continue
         storm = weathers[w] in ("SANDSTORM_DESERT", "FOGGY_SF", "RAINY_SF", "RAINY_COUNTRYSIDE")
         if day:
-            blend(v, (9, 10, 11), (62, 112, 196), 0.45)      # sky top: deep blue
-            blend(v, (12, 13, 14), (214, 196, 162), 0.50)    # horizon: dust
-            blend(v, (0, 1, 2), (60, 50, 40), 0.25)          # warmer ambient
+            blend(v, (9, 10, 11), (34, 72, 190), 0.50)       # sky top: lapis blue
+            blend(v, (12, 13, 14), (218, 196, 150), 0.50)    # horizon: golden dust
+            blend(v, (0, 1, 2), (62, 52, 38), 0.25)          # warmer ambient
         else:
-            blend(v, (9, 10, 11), (8, 12, 30), 0.30)         # clear mountain night
+            blend(v, (9, 10, 11), (10, 12, 40), 0.35)        # clear mountain night, indigo
+            blend(v, (0, 1, 2), (22, 20, 46), 0.20)          # indigo shadows
         if hours[h] in ("6AM", "7PM"):
-            blend(v, (12, 13, 14), (235, 150, 90), 0.35)     # golden dawn / dusk
+            blend(v, (12, 13, 14), (238, 152, 84), 0.40)     # golden dawn / dusk
+        if hours[h] in ("8PM", "10PM"):
+            blend(v, (12, 13, 14), (120, 70, 50), 0.25)      # amber afterglow low on the horizon
         blend(v, (41, 42, 43), (196, 152, 104), 0.30)        # warm post-fx 1
         blend(v, (30, 31, 32), (200, 184, 160), 0.30)        # low clouds dusty
         blend(v, (33, 34, 35), (215, 205, 190), 0.30)
@@ -578,7 +770,7 @@ def generated_header(points):
             init.append(f"amb_spot_y[{si * 12 + k}] = {y:.2f}")
             init.append(f"amb_spot_z[{si * 12 + k}] = {z:.2f}")
     init.append(f"amb_site_count = {len(amb)}")
-    for prefix, route in (("fr", points.route_fr), ("cv", points.route_cv)):
+    for prefix, route in (("fr", points.route_fr), ("cv", points.route_cv), ("qb", points.route_qb)):
         for i, (x, y, z, h) in enumerate(route):
             init.append(f"{prefix}_x[{i}] = {x:.2f}")
             init.append(f"{prefix}_y[{i}] = {y:.2f}")

@@ -16,7 +16,7 @@ The short version: **copy the game folder → make sure `gta_sa.exe` is the 1.0 
 | **Disk space** | About 400 MB on top of the game (the game itself is ~4.5 GB). |
 | **Windows** | Windows 7 or newer, PowerShell 5 (built in). |
 | **Linux / macOS** | Wine 8 or newer (tested with Wine 10 in a 64-bit prefix) and Python 3. |
-| **The mod** | `AfghanistanMod-v1.2.0.zip` from the releases page. It already contains ModLoader, CLEO 5 and SilentPatch; you do not download those separately. |
+| **The mod** | `AfghanistanMod-v1.3.0.zip` from the releases page. It already contains ModLoader, CLEO 5 and SilentPatch; you do not download those separately. |
 
 ---
 
@@ -92,7 +92,7 @@ Both should print `824570`.
 
 ## 3. Install the mod
 
-1. Unzip `AfghanistanMod-v1.2.0.zip` anywhere (for example your Downloads folder). You get `INSTALL.bat`,
+1. Unzip `AfghanistanMod-v1.3.0.zip` anywhere (for example your Downloads folder). You get `INSTALL.bat`,
    `UNINSTALL.bat`, `install.py`, a `game` folder, a `requirements` folder and `docs`.
 2. Run the installer:
    - **Windows:** double-click **`INSTALL.bat`**. A folder dialog opens: pick the copied game folder (the one with
@@ -100,7 +100,7 @@ Both should print `824570`.
      PowerShell script you can open in Notepad.
    - **Linux / macOS:**
      ```bash
-     cd ~/Downloads/AfghanistanMod-v1.2.0
+     cd ~/Downloads/AfghanistanMod-v1.3.0
      python3 install.py "$HOME/Games/GTA San Andreas"
      ```
 3. Read the output. It should end with `installed; emptied N vanilla stream IPLs. Start a NEW GAME.`

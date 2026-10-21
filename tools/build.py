@@ -17,7 +17,7 @@ from afg import export, layout, world  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DIST = os.path.join(ROOT, "dist")
 ID_BASE = 11682  # first free model id in vanilla SA (see docs/TECHNICAL.md)
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 
 
 def main():

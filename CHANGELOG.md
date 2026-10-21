@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.3.0 - 2026-10-21 - act two: "The Snow Road" (12 new missions)
+
+Twenty-four missions instead of twelve. After the Black Stone falls, a second act with a new enemy (Haji Gul
+Zarghun, the opium baron who paid for Siahdast), a traitor inside the valley, and a different kind of gameplay in
+every mission. See [docs/STORY.md](docs/STORY.md) for the mission table.
+
+- **Ashes**: night raid on the bazaar (pickups, motorbikes, foot soldiers), then a chase down the Deh-e-Bagh road.
+- **Buzkashi**: motorised buzkashi against five riders. Carry the sack on your bike into the circle; drop it when
+  you are rammed off; the riders carry it to their circle. Two score counters, first to three, then a shoot-out.
+- **Courier**: steal the money car without wrecking it (damage bar), the driver flees, pickups chase you home.
+- **The Wedding**: sniper overwatch over a wedding party in Dara-e-Sabz; three groups on foot, then a technical.
+- **Dust Storm**: sandstorm weather, a plane wreck on the plain, a wounded pilot on a five-minute timer.
+- **Judas**: the trap at Sar-e-Kotal. Captain Nasir is revealed as Haji Gul's man and leaves the station for good
+  (the main script stops spawning him after this mission; the police contact marker is gone).
+- **Jingle Truck**: steal an overloaded truck and bring it down the mountain road with failed brakes (momentum bar,
+  rollover = fail), heavy-truck sideswipes against chasers, and a stunt ramp over a roadblock at the bottom.
+- **Echoes in the Gorge**: silent raid with knife and silenced pistol. A noise meter fills with loud shots and
+  engines; half fills wakes the camp, full brings the gorge down on you. Plant charges, get clear, rockfall.
+- **Flying Carpet**: the Leviathan's magnet. Lift the ledger car out of the fortress courtyard under RPG fire and
+  set it down at the motor pool; the script tracks the car hanging under the helicopter.
+- **Iron Harvest**: a Rhino mission up the valley through three roadblocks to the camp and its ammunition dump.
+- **Traitor's Road**: chase Nasir's convoy up the mountain road; an RPG roadblock turns across the road half way.
+- **Haji Gul** (finale): three-wave siege at the base entry with six soldiers, then the Hunter against Haji Gul's
+  escaping helicopter (flies waypoints north with HELI_GOTO_COORDS). Epilogue with Rahim.
+- New global route array `qb` (town road Qala-e-Naw -> Deh-e-Bagh); contact logic rewritten around a
+  `contact_kind` variable (the compiler allows at most 8 conditions per IF).
+- Timecyc: "golden dust and lapis blue" palette: deeper lapis sky at midday, indigo shadows and an amber afterglow
+  in the evening.
+- docs/DESIGN_BRIEF.md records the longer mission brief these were adapted from and what the engine cannot do.
+
+Saves made with 1.2.0 do not work with this main.scm (every script rebuild moves the saved instruction pointer):
+start a New Game.
+
 ## 1.2.0 - 2026-10-20 - action missions, police uniform
 
 Twelve missions instead of eight. Four new action missions are woven into the story, the raids got harder, and the

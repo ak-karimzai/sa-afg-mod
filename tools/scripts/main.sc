@@ -6,7 +6,7 @@
 
 //@GENERATED_VARS@
 
-VAR_INT mission_progress mission_shown contact_blip safe_blip wardrobe_blip
+VAR_INT mission_progress mission_shown contact_blip safe_blip wardrobe_blip contact_kind
 VAR_INT save_armed wardrobe_armed style style_model style_count style_ok
 VAR_INT car_gen pickup hunter_given
 VAR_INT mission_timer mission_counter mission_bar  // on-screen timer / counter / bar used by the missions
@@ -19,6 +19,9 @@ VAR_FLOAT npc_x[3] npc_y[3] npc_z[3] npc_h[3] npc_d
 // cv = Ghorband valley Sang-e-Siah -> Dara-e-Sabz -> Darwaza. Driven with TASK_CAR_DRIVE_TO_COORD in straight lines.
 VAR_FLOAT fr_x[56] fr_y[56] fr_z[56] fr_h[56] cv_x[64] cv_y[64] cv_z[64] cv_h[64]
 VAR_INT fr_count cv_count
+// qb = town road Qala-e-Naw -> Deh-e-Bagh (act 2 chases)
+VAR_FLOAT qb_x[24] qb_y[24] qb_z[24] qb_h[24]
+VAR_INT qb_count
 // ambient population (filled by //@GENERATED_INIT@)
 VAR_FLOAT amb_site_x[8] amb_site_y[8] amb_spot_x[96] amb_spot_y[96] amb_spot_z[96]
 VAR_INT amb_site_kind[8] amb_site_count amb_ped[10] amb_active amb_i amb_j amb_k amb_model amb_timer
@@ -144,6 +147,11 @@ IF IS_PLAYER_PLAYING player
         CREATE_CAR_GENERATOR @rhino@ @rhino.h@ RHINO -1 -1 1 0 0 0 10000 car_gen
         SWITCH_CAR_GENERATOR car_gen 101
         hunter_given = 1
+        PRINT_HELP AFG_HNT
+    ENDIF
+    IF mission_progress = 24
+    AND hunter_given = 1
+        hunter_given = 2
         PRINT_HELP AFG_END
     ENDIF
 ENDIF
@@ -157,6 +165,11 @@ GET_CHAR_COORDINATES scplayer player_x player_y player_z
 npc_i = 0
 WHILE npc_i < 3
     GET_DISTANCE_BETWEEN_COORDS_2D player_x player_y npc_x[npc_i] npc_y[npc_i] npc_d
+    // Captain Nasir leaves the valley after "Judas" (mission 17)
+    IF npc_i = 1
+    AND mission_progress > 17
+        npc_d = 9999.0
+    ENDIF
     IF contact_ped[npc_i] = -1
         IF npc_d < 140.0
             GOSUB npc_spawn
@@ -195,41 +208,48 @@ IF NOT mission_shown = -1
     REMOVE_BLIP contact_blip
 ENDIF
 mission_shown = mission_progress
-IF mission_progress = 0
-OR mission_progress = 1
-OR mission_progress = 2
+IF mission_progress = 24
+    RETURN
+ENDIF
+// who gives the next mission: 1 Rahim (bazaar), 2 Nasir (police station), 3 Hamid (Camp Sangar HQ)
+contact_kind = 3
+IF mission_progress < 3
+    contact_kind = 1
+ENDIF
+IF mission_progress = 12
+OR mission_progress = 13
+OR mission_progress = 15
+    contact_kind = 1
+ENDIF
+IF mission_progress = 3
+OR mission_progress = 4
+OR mission_progress = 7
+OR mission_progress = 14
+OR mission_progress = 17
+    contact_kind = 2
+ENDIF
+IF contact_kind = 1
     contact_x = @bazaar.x@
     contact_y = @bazaar.y@
     contact_z = @bazaar.z@
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_RYDER contact_blip
 ENDIF
-IF mission_progress = 3
-OR mission_progress = 4
-OR mission_progress = 7
+IF contact_kind = 2
     contact_x = @police.x@
     contact_y = @police.y@
     contact_z = @police.z@
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_POLICE contact_blip
 ENDIF
-IF mission_progress = 5
-OR mission_progress = 6
-OR mission_progress = 8
-OR mission_progress = 9
-OR mission_progress = 10
-OR mission_progress = 11
+IF contact_kind = 3
     contact_x = @base_hq.x@
     contact_y = @base_hq.y@
     contact_z = @base_hq.z@
     ADD_SPRITE_BLIP_FOR_CONTACT_POINT contact_x contact_y contact_z RADAR_SPRITE_FLAG contact_blip
 ENDIF
-IF mission_progress = 12
-    mission_shown = 12
-    RETURN
-ENDIF
 RETURN
 
 check_contact:
-IF mission_progress > 11
+IF mission_progress > 23
     RETURN
 ENDIF
 IF NOT LOCATE_CHAR_ON_FOOT_3D scplayer contact_x contact_y contact_z 1.5 1.5 2.0 FALSE
@@ -272,6 +292,43 @@ IF mission_progress = 10
 ENDIF
 IF mission_progress = 11
     LOAD_AND_LAUNCH_MISSION m12_vulture.sc
+ENDIF
+// ---- act 2: The Snow Road
+IF mission_progress = 12
+    LOAD_AND_LAUNCH_MISSION m13_ashes.sc
+ENDIF
+IF mission_progress = 13
+    LOAD_AND_LAUNCH_MISSION m14_buzkashi.sc
+ENDIF
+IF mission_progress = 14
+    LOAD_AND_LAUNCH_MISSION m15_courier.sc
+ENDIF
+IF mission_progress = 15
+    LOAD_AND_LAUNCH_MISSION m16_wedding.sc
+ENDIF
+IF mission_progress = 16
+    LOAD_AND_LAUNCH_MISSION m17_duststorm.sc
+ENDIF
+IF mission_progress = 17
+    LOAD_AND_LAUNCH_MISSION m18_judas.sc
+ENDIF
+IF mission_progress = 18
+    LOAD_AND_LAUNCH_MISSION m19_jingle.sc
+ENDIF
+IF mission_progress = 19
+    LOAD_AND_LAUNCH_MISSION m20_echoes.sc
+ENDIF
+IF mission_progress = 20
+    LOAD_AND_LAUNCH_MISSION m21_carpet.sc
+ENDIF
+IF mission_progress = 21
+    LOAD_AND_LAUNCH_MISSION m22_ironharvest.sc
+ENDIF
+IF mission_progress = 22
+    LOAD_AND_LAUNCH_MISSION m23_traitor.sc
+ENDIF
+IF mission_progress = 23
+    LOAD_AND_LAUNCH_MISSION m24_hajigul.sc
 ENDIF
 // wait until the mission thread has set the flag so we don't relaunch it
 WAIT 500
