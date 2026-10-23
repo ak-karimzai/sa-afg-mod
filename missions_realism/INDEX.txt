@@ -1,0 +1,24 @@
+m00  idx=0 script=AFM1 title=Homecoming bytes=2556 instr=285
+m01  idx=1 script=AFM2 title=Market Day bytes=2362 instr=250
+m02  idx=2 script=AFM3 title=Medicine for Shahrak bytes=1833 instr=193
+m03  idx=3 script=AFM4 title=Darwaza bytes=3629 instr=410
+m04  idx=4 script=AFM5 title=Burj-e-Khak bytes=4329 instr=471
+m05  idx=5 script=AFM6 title=Aid Convoy bytes=3125 instr=351
+m06  idx=6 script=AFM7 title=Fuel and Fire bytes=4302 instr=505
+m07  idx=7 script=AFM8 title=Black Stone bytes=3167 instr=365
+m08  idx=8 script=AFM9 title=The Pass bytes=3120 instr=376
+m09  idx=9 script=AFM10 title=Eagle's Nest bytes=2149 instr=239
+m10  idx=10 script=AFM11 title=Qala-e-Kohna bytes=3752 instr=425
+m11  idx=11 script=AFM12 title=Vulture bytes=2969 instr=327
+m12  idx=12 script=AFM13 title=Ashes bytes=3512 instr=405
+m13  idx=13 script=AFM14 title=Buzkashi bytes=4480 instr=512
+m14  idx=14 script=AFM15 title=Courier bytes=4030 instr=461
+m15  idx=15 script=AFM16 title=The Wedding bytes=3941 instr=426
+m16  idx=16 script=AFM17 title=Dust Storm bytes=3765 instr=413
+m17  idx=17 script=AFM18 title=Judas bytes=3569 instr=394
+m18  idx=18 script=AFM19 title=Jingle Truck bytes=3760 instr=417
+m19  idx=19 script=AFM20 title=Echoes in the Gorge bytes=4464 instr=494
+m20  idx=20 script=AFM21 title=Flying Carpet bytes=2701 instr=308
+m21  idx=21 script=AFM22 title=Iron Harvest bytes=5535 instr=637
+m22  idx=22 script=AFM23 title=Traitor's Road bytes=2723 instr=309
+m23  idx=23 script=AFM24 title=Haji Gul bytes=6096 instr=659

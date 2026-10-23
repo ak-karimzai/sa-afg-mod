@@ -1,0 +1,77 @@
+X00A03 ~r~Bandit:~w~ The cousins are coming down from the ridge. Pin him on the road!
+X00A04 ~g~The shooting has died down. Keep the flour moving to Deh-e-Bagh.
+X01A01 ~r~Bandit:~w~ Gunfire at the bazaar! Everyone, get over there, now!
+X01A02 ~w~Stay sharp. One of the ~r~bandits~w~ is still out there.
+X01A03 ~g~The bazaar falls quiet. Return to Rahim.
+X02A01 ~r~Bandits in a Landstalker are chasing you! Keep the pickup moving.
+X02A02 ~g~The bandits are down. Keep going to Shahrak.
+X02A03 ~r~Do not lead the bandits to the clinic! Lose them or kill them first.
+X02A05 ~g~You shook off the bandits. Keep going.
+X03A01 ~y~Sergeant:~w~ Check the sandbags. Count our men. Stay sharp, some may still be out there.
+X03A02 ~r~Militant:~w~ I am hit! Cover me, I am falling back!
+X03A03 ~r~A wounded militant is slipping away down the gorge. Finish him!
+X03A04 ~y~Sergeant:~w~ Reload, quick! Pull back behind the sandbags. They will come again.
+X04A02 ~r~Kidnapper (radio):~w~ Shots at the tower! Officers, hold the stairs. Send the men from the ridge!
+X04A03 ~r~One of them is wounded and running for the road. Stop him.
+X04A05 ~r~Black Stone reinforcements are coming over the ridge!
+X05A01 ~y~Karim (radio):~w~ More on the ridge! They are coming down both sides, and a pickup is on your tail!
+X05A02 ~r~Clear the attackers before unloading the truck!
+X05A03 ~g~The villagers unload the truck while the road is watched. Hold position.
+X05A04 ~r~Karim and Jawed did not make it to the village.
+X06A01 ~r~Bandit:~w~ Shots in the village! Cut off the road, take them from the flank!
+X06A02 ~g~The village is burning.~w~ Hold your position and watch the ridge.
+X06A03 A ~r~wounded bandit~w~ is stumbling back up the road. Finish him.
+X06A04 ~g~Area clear.~w~ Nothing moves among the flames.
+X06A05 ~g~All hostiles down.~w~ Do not leave yet, check the camp.
+X07A01 ~w~Camp quiet. Hold position, watch the walls and check the tents.
+X07A02 ~r~Survivors are circling back! Watch both flanks!
+X08A01 ~r~The trucks are burning. Finish off the escort before they regroup.
+X08A02 ~y~Hamid (radio):~w~ Hold. Let me watch the road. Nothing else is moving.
+X08B01 ~r~Bikes coming up the road behind the convoy!
+X08R01 ~y~Hamid (radio):~w~ My runner left two more rockets by the rocks. Make them count.
+X09A01 ~y~Hamid:~w~ Gunfire on the walls! They know you are there. Riflemen and marksmen, stay moving!
+X09B01 ~y~Hamid:~w~ Hold still. I am checking the film.
+X10A01 ~y~Karim:~w~ Siahdast is down! Sweep the fortress, nobody gets behind us.
+X10A02 ~y~Karim:~w~ The fortress is quiet. Check the dead before we move.
+X10A03 ~y~Karim:~w~ Man down! Keep your head low!
+X10A04 ~r~Guard:~w~ Intruders! Sound the alarm, to the walls!
+X10A05 ~r~Guard:~w~ More men from the barracks! Flank them!
+X11A01 ~y~Hamid (radio):~w~ They radioed ahead. Fighters at the gap, one has an RPG. Stay off the ridgeline!
+X11A02 ~r~Fighters~w~ are still alive near Darwaza. Finish them.
+X12A01 ~r~Raider:~w~ Shots at the bazaar! All cars, move in, now!
+X12A02 ~g~They are down.~w~ Stay behind cover and watch the roads. Not all of them may be dead.
+X13A01 ~w~The riders are down. Hold the field and ~y~watch the road~w~.
+X13A02 ~r~Two of them doubled back on foot!~w~ Take them before they reach cover.
+X13A03 ~g~Field clear.~w~ Regroup with Rahim.
+X14A01 ~y~Secure the area. Watch for stragglers before handing over the sedan.
+X14A02 ~r~Radio:~w~ A second truck is coming in behind you!
+X14A03 ~g~The road is quiet.~w~ Nobody else is coming.
+X15A01 ~w~Check the slopes. Make sure no one is left.
+X15A02 ~r~A wounded fighter is crawling toward the village!
+X15A03 ~g~The slopes are quiet. Regroup with the elder.
+X15A05 ~r~They are pulling back! Hold the line!
+X16A01 ~y~Area clear.~w~ Hold position and sweep the wreck. Watch the dust for stragglers.
+X16A02 ~r~Engine noise in the dust!~w~ Another pickup is coming in from the east. Take cover!
+X16A03 ~r~One of them is still alive and coming at you!
+X17A01 ~y~Check the bodies and the walls. Make sure no one is left.
+X17A02 ~y~Baz:~w~ ~w~Hold position and reload. Their friends heard the shooting.
+X17A03 ~r~Contact!~w~ They are flanking from the east and west!
+X18A01 ~y~Hamid (radio):~w~ Shots at the gate! Haji Gul's men are running up from the barracks, find cover!
+X18A03 The yard falls silent. ~y~Hold your position~w~ and watch the gate.
+X18A04 ~r~A wounded guard~w~ staggers out, still armed. Finish him.
+X19A01 ~g~Sentries down.~w~ Sweep the camp quietly and make sure nobody is left.
+X19A02 ~r~A wounded sentry is crawling for the radio! Finish him!
+X19B02 ~r~Radio:~w~ Motor pool, move up! Shooting on the ridge!
+X19B03 ~r~Sentry:~w~ Someone is on the wall! Get up there!
+X20A01 ~y~Hamid:~w~ Hold her steady over the motor pool. Let me check the car before we move.
+X20A02 ~y~Hamid:~w~ Radio says Haji Gul's men are still scrambling. Keep your eyes open.
+X20A03 ~r~More gunmen are pouring onto the fortress walls!
+X21A01 ~r~Haji Gul's man:~w~ A tank in the valley! Second squad, flank it! Call the trucks!
+X21A02 The garrison is down. Blow up the ~y~ammunition dump~w~ before they regroup.
+X21A03 ~y~Hamid (radio):~w~ Dust on the north road. One more truck is coming fast. Hold the Rhino and finish them.
+X21A04 ~g~The camp is quiet. Hamid is calling you back.
+X22A01 ~y~Nasir is down.~w~ Finish off his ~r~escort~w~ before they melt into the rocks.
+X22A02 ~y~Hamid (radio):~w~ I see smoke on the road. Hold your position while I confirm it from the ridge.
+X22A03 ~r~Nasir:~w~ Faster, you fools! Somebody is shooting at us!
+X23A01 ~y~Hamid (radio):~w~ That was the last of them. Hold position and check the ditches for wounded men.
+X23A02 ~r~A wounded raider is still alive! Take him out!
