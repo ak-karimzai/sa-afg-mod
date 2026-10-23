@@ -23,6 +23,8 @@ X06A02 ~g~The village is burning.~w~ Hold your position and watch the ridge.
 X06A03 A ~r~wounded bandit~w~ is stumbling back up the road. Finish him.
 X06A04 ~g~Area clear.~w~ Nothing moves among the flames.
 X06A05 ~g~All hostiles down.~w~ Do not leave yet, check the camp.
+X06B01 ~r~Get out of the vehicle~w~ to set the charge.
+X06B02 Setting the charge... ~y~hold position~w~.
 X07A01 ~w~Camp quiet. Hold position, watch the walls and check the tents.
 X07A02 ~r~Survivors are circling back! Watch both flanks!
 X08A01 ~r~The trucks are burning. Finish off the escort before they regroup.
