@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **Flying Carpet** redesigned: the Leviathan's magnet could not pick the sedan out of the fortress courtyard in
+  game (the courtyard is too narrow to get low enough, and the script never attached the winch in the first
+  place), so the mission is now a raid. Fly the Leviathan to Qala-e-Kohna, land outside the walls, take the
+  sedan from the courtyard on foot and drive it down the mountain road to the motor pool. Same garrison, same
+  drop point, new dialogue.
+
 ## 1.3.0 - 2026-10-21 - act two: "The Snow Road" (12 new missions)
 
 Twenty-four missions instead of twelve. After the Black Stone falls, a second act with a new enemy (Haji Gul
