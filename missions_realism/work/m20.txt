@@ -48,6 +48,7 @@ L180:
   0050 GOSUB L2276
   00A5 CREATE_CAR 417 1.97e+03f -1.79e+03f 13.96f 34@
   0175 SET_CAR_HEADING 34@ 0f
+  0788 ATTACH_WINCH_TO_HELI 34@ 1 ; enables the Leviathan magnet (vanilla HEIST5 does this right after CREATE_CAR 417; without it the heli has no winch and the car can never be picked up)
   00A5 CREATE_CAR 405 -1548f -1.29e+03f 334.23f 38@
   0175 SET_CAR_HEADING 38@ 9e+01f
   0224 SET_CAR_HEALTH 38@ 1800
